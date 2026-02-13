@@ -5,13 +5,16 @@ import ImageGallery from "@/components/sections/ImageGallery";
 import ServicesSection from "@/components/sections/ServicesSection";
 import PixelFashionSection from "@/components/sections/PixelFashionSection";
 import DreamyScroll from "@/components/sections/DreamyScroll";
-import ColumnRevealSection from "@/components/sections/ColumnRevealSection";
+import DreamersReplication from "@/components/sections/DreamersReplication";
+import OurHelpSection from "@/components/sections/OurHelpSection";
 
 export default function Home() {
     return (
         <main className="relative w-full">
             <Hero />
             {/*<ColumnRevealSection />*/}
+            <OurHelpSection />
+            {/*<DreamersReplication />*/}
             <DreamyScroll />
             {/*<About />*/}
             <About2 />

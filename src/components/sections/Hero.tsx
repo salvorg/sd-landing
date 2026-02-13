@@ -118,7 +118,7 @@ export default function IntegratedHero() {
                 {[...Array(7)].map((_, i) => (
                     <div
                         key={i}
-                        className="reveal-col flex-1 bg-[#050505] h-full"
+                        className="reveal-col flex-1 bg-[#000] h-full"
                         // Убрали border-r для эффекта литой стены
                     />
                 ))}

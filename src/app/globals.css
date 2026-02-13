@@ -19,3 +19,14 @@ html.lenis {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+.grid-cell {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition:
+          border-color 0.25s ease,
+          box-shadow 0.25s ease;
+
+  will-change: border-color, box-shadow;
+}

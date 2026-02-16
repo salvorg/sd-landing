@@ -30,3 +30,32 @@ html.lenis {
 
   will-change: border-color, box-shadow;
 }
+
+@layer base {
+  :root {
+    --header-height: 80px;
+
+    /* Основные фоны */
+    --bg-main: #ffffff;
+    --bg-secondary: #f8f8f8;
+    --bg-accent: #f0f0f0;
+
+    /* Текст */
+    --text-main: #0a0a0a;
+    --text-muted: #71717a;
+    --text-inverted: #ffffff;
+
+    /* Акценты (Sanarip Blue) */
+    --brand-primary: #2563eb;
+    --brand-secondary: #3b82f6;
+
+    /* Линии и границы (Modular Style) */
+    --border-color: rgba(0, 0, 0, 0.05);
+    --grid-line: rgba(0, 0, 0, 0.03);
+
+    --bg-primary: #ffffff;
+    --brand-blue: #2563eb;
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --grid-number: rgba(0, 0, 0, 0.03);
+  }
+}

@@ -94,11 +94,12 @@ export default function IntegratedHero() {
     }, { scope: containerRef });
 
     return (
-        <div ref={containerRef} className="bg-zinc-950 overflow-hidden">
+        <div ref={containerRef} className="relative z-10 bg-[var(--bg-main)] overflow-hidden">
+
             {/* СЕКЦИЯ 1: HERO */}
-            <section className="relative h-screen w-full flex flex-col justify-center px-4 md:px-12 overflow-hidden">
-                <div className="hero-content w-full max-w-[1400px] mx-auto z-10">
-                    <h1 className="font-bold leading-[0.85] tracking-tighter uppercase text-white">
+            <section className="relative h-screen w-full flex flex-col justify-center px-4 md:px-12 overflow-hidden z-0 bg-[var(--bg-main)]">
+                <div className="hero-content w-full max-w-[1400px] mx-auto">
+                    <h1 className="font-bold leading-[0.85] tracking-tighter uppercase text-[var(--text-main)]">
                         <div className="overflow-hidden mb-2">
                             <span className="hero-line block text-[15vw] lg:text-[160px]">Digital</span>
                         </div>
@@ -106,33 +107,32 @@ export default function IntegratedHero() {
                             <span className="hero-line block text-[10.5vw] lg:text-[120px]">Transformation</span>
                         </div>
                         <div className="overflow-hidden">
-                            <span className="hero-line block text-[13vw] lg:text-[160px] text-blue-500 italic">Sanarip 2026</span>
+                            <span className="hero-line block text-[13vw] lg:text-[160px] text-[var(--brand-primary)] italic">Sanarip 2026</span>
                         </div>
                     </h1>
                 </div>
-                <div ref={bgRef} className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[70vw] h-[70vw] bg-blue-600/20 blur-[120px] rounded-full z-0" />
+                {/* В светлой теме шар делаем очень нежным */}
+                <div ref={bgRef} className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[70vw] h-[70vw] bg-blue-100 blur-[120px] rounded-full z-[-1] opacity-50" />
             </section>
 
-            {/* СЛОЙ КОЛОНОК (Транспорт для контента) */}
-            <div className="absolute inset-0 flex pointer-events-none z-20">
+            {/* СЛОЙ КОЛОНОК (Светлые) */}
+            <div className="absolute inset-0 flex pointer-events-none z-20 h-screen w-full">
                 {[...Array(7)].map((_, i) => (
                     <div
                         key={i}
-                        className="reveal-col flex-1 bg-[#000] h-full"
-                        // Убрали border-r для эффекта литой стены
+                        className="reveal-col flex-1 relative h-full bg-[var(--bg-secondary)] last:border-r-0"
                     />
                 ))}
             </div>
 
-            {/* СЕКЦИЯ 2: GENERATED FUTURE (Лежит поверх всего в центре) */}
-            <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                <div className="reveal-content max-w-4xl text-white px-8 text-center">
+             {/*СЕКЦИЯ 2: CONTENT */}
+            <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none h-screen w-full bg-transparent">
+                <div className="reveal-content max-w-4xl text-[var(--text-main)] px-8 text-center">
                     <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-8">
-                        The Future <br /> <span className="text-blue-600 underline">Generated</span>
+                        The Future <br /> <span className="text-[var(--brand-primary)]">Generated</span>
                     </h2>
-                    <p className="text-xl text-zinc-400 max-w-xl mx-auto font-light leading-relaxed">
-                        Our infrastructure is built for the next generation of AI,
-                        providing unprecedented scale and performance.
+                    <p className="text-[var(--text-muted)] text-xl md:text-2xl max-w-xl mx-auto font-light">
+                        Our infrastructure is built for the next generation of AI.
                     </p>
                 </div>
             </div>

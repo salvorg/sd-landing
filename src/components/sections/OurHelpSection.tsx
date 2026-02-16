@@ -54,16 +54,15 @@ export default function OurHelpSection() {
     useGSAP(() => {
         if (!sectionRef.current || !leftRef.current) return;
 
-        // Фиксация левого заголовка
+        // Фиксация левой колонки с учетом отступа хедера
         ScrollTrigger.create({
             trigger: sectionRef.current,
-            start: "top top",
+            start: "top top", // Секция прилипает к верху экрана
             end: "bottom bottom",
             pin: leftRef.current,
             pinSpacing: false,
         });
 
-        // Анимация появления контента в каждой секции
         const cards = gsap.utils.toArray<HTMLElement>(".help-card");
         cards.forEach((card) => {
             const content = card.querySelector(".card-content");
@@ -81,69 +80,91 @@ export default function OurHelpSection() {
     }, { scope: sectionRef });
 
     return (
-        <section ref={sectionRef} className="relative w-full bg-[#050505] flex flex-col md:flex-row border-t border-white/10">
+        <section
+            ref={sectionRef}
+            className="relative w-full flex flex-col md:flex-row border-t border-[var(--border-subtle)]"
+            style={{ backgroundColor: 'var(--bg-primary)' }}
+        >
 
             {/* ЛЕВАЯ ЧАСТЬ (Pinned) */}
-            <div ref={leftRef} className="md:w-1/3 h-screen hidden md:flex flex-col justify-between p-16 border-r border-white/5">
+            <div
+                ref={leftRef}
+                // Добавляем pt-[var(--header-height)] чтобы контент не ушел под шапку
+                className="md:w-1/3 h-screen hidden md:flex flex-col justify-between p-16 pt-[calc(var(--header-height)+4rem)] border-r border-[var(--border-subtle)]"
+                style={{ backgroundColor: 'var(--bg-secondary)' }}
+            >
                 <div>
-                    <span className="text-blue-500 font-mono text-xs tracking-[0.4em] uppercase mb-6 block">
-                        Our Mission
+                    <span className="text-[var(--brand-blue)] font-mono text-xs tracking-[0.4em] uppercase mb-6 block font-bold">
+                        Our Expertise
                     </span>
-                    <h2 className="text-6xl font-black uppercase tracking-tighter leading-[0.9] text-white">
+                    <h2 className="text-6xl font-black uppercase tracking-tighter leading-[0.9] text-[var(--text-main)]">
                         Чем мы <br />
-                        <span className="text-transparent" style={{ WebkitTextStroke: '1px #525252' }}>помогаем</span>
+                        <span
+                            className="text-transparent"
+                            style={{ WebkitTextStroke: '1px var(--text-muted)', opacity: 0.4 }}
+                        >
+                            помогаем
+                        </span>
                     </h2>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
-                        <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">Active_Service</span>
+                        <div className="w-1.5 h-1.5 bg-[var(--brand-blue)] rounded-full animate-pulse" />
+                        <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold">System_Online</span>
                     </div>
-                    <p className="text-zinc-600 font-mono text-[10px] leading-relaxed uppercase tracking-widest">
+                    <p className="text-[var(--text-muted)] font-mono text-[10px] leading-relaxed uppercase tracking-[0.2em]">
                         [ 42.87° N, 74.59° E ] <br />
-                        Sanarip_Infrastructure
+                        Bishkek_Digital_Hub
                     </p>
                 </div>
             </div>
 
-            {/* ПРАВАЯ ЧАСТЬ (Полноэкранные блоки) */}
+            {/* ПРАВАЯ ЧАСТЬ */}
             <div className="md:w-2/3 w-full">
                 {helpItems.map((item, i) => (
                     <div
                         key={i}
-                        className="help-card relative h-screen w-full flex items-center px-8 md:px-20 border-b border-white/5 overflow-hidden"
+                        // Добавляем pt для каждой карточки, чтобы текст центрировался ниже хедера
+                        className="help-card relative h-screen w-full flex items-center px-8 md:px-24 pt-[var(--header-height)] border-b border-[var(--border-subtle)] overflow-hidden bg-[var(--bg-primary)]"
                     >
-                        {/* Фоновый номер */}
-                        <span className="absolute -right-6 -bottom-10 text-[35vw] font-black text-white/[0.02] leading-none select-none pointer-events-none">
+                        <span
+                            className="absolute -right-10 -bottom-16 text-[38vw] font-black leading-none select-none pointer-events-none"
+                            style={{ color: 'var(--grid-number)' }}
+                        >
                             {item.tag}
                         </span>
 
                         <div className="card-content relative z-10 w-full">
-                            <div className="flex flex-wrap gap-2 mb-8">
-                                <span className="text-blue-500 font-mono text-xs font-bold mr-4">ID_0{item.tag}</span>
+                            <div className="flex flex-wrap items-center gap-3 mb-10">
+                                <span className="text-[var(--brand-blue)] font-mono text-sm font-black mr-4">
+                                    MOD_0{item.tag}
+                                </span>
                                 {item.tech.map((t) => (
-                                    <span key={t} className="px-3 py-1 border border-white/10 rounded-full text-[9px] font-mono text-zinc-600 uppercase">
+                                    <span
+                                        key={t}
+                                        className="px-3 py-1 border border-[var(--border-subtle)] rounded-full text-[10px] font-mono text-[var(--text-muted)] uppercase bg-[var(--bg-secondary)]"
+                                    >
                                         {t}
                                     </span>
                                 ))}
                             </div>
 
-                            <h3 className="text-4xl md:text-7xl font-bold text-white mb-8 tracking-tighter leading-[1.1]">
+                            <h3 className="text-4xl md:text-7xl font-bold text-[var(--text-main)] mb-10 tracking-tighter leading-[1.05] max-w-4xl">
                                 {item.title}
                             </h3>
 
-                            <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed mb-12 max-w-2xl">
+                            <p className="text-[var(--text-muted)] text-lg md:text-2xl font-light leading-relaxed mb-16 max-w-2xl">
                                 {item.desc}
                             </p>
 
-                            <button className="group flex items-center gap-6 text-white font-mono text-[10px] uppercase tracking-[0.4em] hover:text-blue-500 transition-all duration-300">
-                                <span className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 group-hover:border-blue-500 transition-colors">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-1 transition-transform">
+                            <button className="group flex items-center gap-6 text-[var(--text-main)] font-mono text-[10px] uppercase tracking-[0.4em] hover:text-[var(--brand-blue)] transition-all duration-300">
+                                <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)] group-hover:border-[var(--brand-blue)] group-hover:bg-[var(--brand-blue)] group-hover:text-white transition-all duration-500">
+                                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-1 transition-transform">
                                         <path d="M1 6H11M11 6L6 1M11 6L6 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </span>
-                                Read details
+                                <span className="font-bold">Explore Details</span>
                             </button>
                         </div>
                     </div>

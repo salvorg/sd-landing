@@ -17,6 +17,7 @@ export default function About() {
     const cellsRef = useRef<Cell[]>([]);
     const rafRef = useRef<number>(0);
     const lastShuffleRef = useRef(0);
+    const isVisible = useRef(false);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         mouseRef.current.x = e.clientX;
@@ -29,7 +30,20 @@ export default function About() {
 
         const cells = Array.from(container.children) as HTMLElement[];
 
-        // КЭШИРУЕМ ГЕОМЕТРИЮ ОДИН РАЗ
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                isVisible.current = entry.isIntersecting;
+                if (isVisible.current) {
+                    lastShuffleRef.current = performance.now();
+                    rafRef.current = requestAnimationFrame(update);
+                } else {
+                    cancelAnimationFrame(rafRef.current);
+                }
+            },
+            { threshold: 0.1 }
+        );
+        observer.observe(container);
+
         cellsRef.current = cells.map((el) => {
             const rect = el.getBoundingClientRect();
             return {
@@ -46,53 +60,56 @@ export default function About() {
         const lerp = 0.08;
 
         const update = (time: number) => {
+            if (!isVisible.current) return;
+
+            if (Math.round(time) % 2 !== 0) {
+                rafRef.current = requestAnimationFrame(update);
+                return;
+            }
+
             const { x, y } = mouseRef.current;
+            let hasActiveAnimations = false;
 
             if (time - lastShuffleRef.current > 120) {
                 lastShuffleRef.current = time;
 
-                // сбрасываем цели
-                for (const c of cellsRef.current) {
-                    c.target = 0;
-                }
+                if (x !== -9999) {
+                    for (const c of cellsRef.current) c.target = 0;
 
-                const near: Cell[] = [];
-
-                for (const c of cellsRef.current) {
-                    const dx = x - c.x;
-                    const dy = y - c.y;
-                    if (dx * dx + dy * dy < radiusSq) {
-                        near.push(c);
+                    const near: Cell[] = [];
+                    for (const c of cellsRef.current) {
+                        const dx = x - c.x;
+                        const dy = y - c.y;
+                        if (dx * dx + dy * dy < radiusSq) near.push(c);
                     }
-                }
 
-                const count = Math.min(
-                    near.length,
-                    3 + ((Math.random() * 5) | 0)
-                );
-
-                for (let i = 0; i < count; i++) {
-                    const c = near[(Math.random() * near.length) | 0];
-                    c.target = 0.4 + Math.random() * 0.6;
+                    const count = Math.min(near.length, 3 + ((Math.random() * 5) | 0));
+                    for (let i = 0; i < count; i++) {
+                        const c = near[(Math.random() * near.length) | 0];
+                        if (c) c.target = 0.4 + Math.random() * 0.6;
+                    }
                 }
             }
 
-            // инерция — каждый кадр
             for (const c of cellsRef.current) {
-                c.current += (c.target - c.current) * lerp;
+                const diff = c.target - c.current;
 
-                if (c.current > 0.001) {
-                    c.el.style.setProperty("--i", c.current.toString());
-                } else {
+                if (Math.abs(diff) > 0.001 || c.current > 0.001) {
+                    c.current += diff * lerp;
+                    c.el.style.setProperty("--i", c.current.toFixed(2));
+                    hasActiveAnimations = true;
+                } else if (c.current !== 0) {
+                    c.current = 0;
                     c.el.style.removeProperty("--i");
                 }
             }
-
             rafRef.current = requestAnimationFrame(update);
         };
 
-        rafRef.current = requestAnimationFrame(update);
-        return () => cancelAnimationFrame(rafRef.current);
+        return () => {
+            observer.disconnect();
+            cancelAnimationFrame(rafRef.current);
+        };
     }, []);
 
     return (
@@ -105,7 +122,7 @@ export default function About() {
                 ref={containerRef}
                 className="absolute inset-0 grid grid-cols-[repeat(auto-fill,minmax(50px,1fr))] border-l border-t border-white/10"
             >
-                {Array.from({ length: 900 }).map((_, i) => (
+                {Array.from({ length: 400 }).map((_, i) => (
                     <GridItem key={i} />
                 ))}
             </div>

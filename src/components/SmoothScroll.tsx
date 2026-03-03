@@ -9,15 +9,23 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const lenisRef = useRef<any>(null);
 
     useEffect(() => {
-        // Синхронизация с тикером GSAP
-        function update(time: number) {
-            lenisRef.current?.lenis?.raf(time * 1000);
-        }
+        const lenis = lenisRef.current?.lenis;
+        if (!lenis) return;
+
+        lenis.on('scroll', () => {
+            ScrollTrigger.update();
+        });
+
+        const update = (time: number) => {
+            lenis.raf(time * 1000);
+        };
 
         gsap.ticker.add(update);
+        gsap.ticker.lagSmoothing(0);
 
         return () => {
             gsap.ticker.remove(update);
+            lenis.off('scroll');
         };
     }, []);
 

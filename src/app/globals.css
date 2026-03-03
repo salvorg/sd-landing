@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  /* Регистрация шрифта в системе Tailwind */
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui;
+}
+
 html.lenis {
   height: auto;
 }
@@ -20,19 +25,12 @@ html.lenis {
   pointer-events: none;
 }
 
-.grid-cell {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-  transition:
-          border-color 0.25s ease,
-          box-shadow 0.25s ease;
-
-  will-change: border-color, box-shadow;
-}
-
 @layer base {
   :root {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
     --header-height: 80px;
 
     /* Основные фоны */
@@ -58,4 +56,23 @@ html.lenis {
     --border-subtle: rgba(0, 0, 0, 0.06);
     --grid-number: rgba(0, 0, 0, 0.03);
   }
+}
+
+.help-card, .reveal-col, .grid-cell {
+  /* Говорит браузеру, что изменения внутри элемента не влияют на остальную страницу */
+  contain: layout style;
+}
+
+.card-content {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.help-card, .md\:w-1\/3 {
+  will-change: transform;
+  transform: translateZ(0); /* Создает новый композитный слой */
+}
+
+.code-bg-container {
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
 }

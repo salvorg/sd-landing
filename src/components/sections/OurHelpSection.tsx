@@ -54,29 +54,57 @@ export default function OurHelpSection() {
     useGSAP(() => {
         if (!sectionRef.current || !leftRef.current) return;
 
-        // Фиксация левой колонки с учетом отступа хедера
+        // Фиксация левой колонки
         ScrollTrigger.create({
             trigger: sectionRef.current,
-            start: "top top", // Секция прилипает к верху экрана
+            start: "top top",
             end: "bottom bottom",
             pin: leftRef.current,
             pinSpacing: false,
+            toggleActions: "play pause resume reset"
         });
 
         const cards = gsap.utils.toArray<HTMLElement>(".help-card");
+
         cards.forEach((card) => {
             const content = card.querySelector(".card-content");
+            const bgTag = card.querySelector("span.absolute"); // Тот самый огромный номер
+
+            // Анимация контента
             gsap.from(content, {
-                y: 60,
+                y: 40, // Уменьшил амплитуду (легче для CPU)
                 opacity: 0,
-                duration: 1,
+                duration: 0.8,
+                ease: "power2.out",
                 scrollTrigger: {
                     trigger: card,
-                    start: "top 70%",
+                    start: "top 80%",
+                    // preventOverlaps: true, // Помогает при быстром скролле
+                    // fastScrollEnd: true,   // Завершает анимацию мгновенно при прокрутке мимо
                     toggleActions: "play none none reverse",
                 }
             });
+
+            // Легкая анимация для фонового номера (по желанию)
+            if (bgTag) {
+                gsap.fromTo(bgTag,
+                    { opacity: 0, x: 50 },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 90%",
+                            scrub: true // Будет двигаться плавно со скроллом
+                        }
+                    }
+                );
+            }
         });
+
+        // Освежаем ScrollTrigger после рендера всех карточек
+        ScrollTrigger.refresh();
+
     }, { scope: sectionRef });
 
     return (
@@ -110,7 +138,7 @@ export default function OurHelpSection() {
 
                 <div className="space-y-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-1.5 bg-[var(--brand-blue)] rounded-full animate-pulse" />
+                        {/*<div className="w-1.5 h-1.5 bg-[var(--brand-blue)] rounded-full animate-pulse" />*/}
                         <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold">System_Online</span>
                     </div>
                     <p className="text-[var(--text-muted)] font-mono text-[10px] leading-relaxed uppercase tracking-[0.2em]">
@@ -125,12 +153,15 @@ export default function OurHelpSection() {
                 {helpItems.map((item, i) => (
                     <div
                         key={i}
-                        // Добавляем pt для каждой карточки, чтобы текст центрировался ниже хедера
                         className="help-card relative h-screen w-full flex items-center px-8 md:px-24 pt-[var(--header-height)] border-b border-[var(--border-subtle)] overflow-hidden bg-[var(--bg-primary)]"
                     >
                         <span
-                            className="absolute -right-10 -bottom-16 text-[38vw] font-black leading-none select-none pointer-events-none"
-                            style={{ color: 'var(--grid-number)' }}
+                            className="absolute -right-10 -bottom-16 text-[38vw] font-black ..."
+                            style={{
+                                color: 'var(--grid-number)',
+                                willChange: 'transform, opacity',
+                                backfaceVisibility: 'hidden',
+                            }}
                         >
                             {item.tag}
                         </span>

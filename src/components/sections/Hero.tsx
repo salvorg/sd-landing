@@ -8,134 +8,105 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-export default function IntegratedHero() {
+export default function HeroSection() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const bgRef = useRef<HTMLDivElement>(null);
+    const videoWrapperRef = useRef<HTMLDivElement>(null);
+    const textContentRef = useRef<HTMLDivElement>(null);
 
     useGSAP(() => {
-        if (!containerRef.current) return;
+        if (!containerRef.current || !videoWrapperRef.current || !textContentRef.current) return;
 
-        const columns = gsap.utils.toArray<HTMLElement>(".reveal-col");
-
-        // Главный таймлайн для всей сцены
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top",
-                end: "+=400%", // Увеличили путь, так как сцен стало больше
+                end: "+=150%",
                 pin: true,
-                scrub: 1.5,
-                anticipatePin: 1,
+                scrub: 1,
             }
         });
 
-        // --- ЭТАП 1: Уход Hero ---
-        tl.to(".hero-line", {
-            x: (i) => (i + 1) * 600,
+        tl.to(textContentRef.current, {
+            x: -200,      // Немного уводим влево
             opacity: 0,
-            stagger: 0.05,
-            ease: "power1.inOut"
-        }, 0);
-
-        tl.to(bgRef.current, {
-            scale: 2,
-            opacity: 0,
-            x: 200,
-        }, 0);
-
-        // --- ЭТАП 2: Появление колонок СНИЗУ (Заход секции) ---
-        // Колонки теперь черные (#050505), чтобы сливаться с контентом
-        tl.fromTo(columns,
-            { yPercent: 100 },
-            {
-                yPercent: 0,
-                stagger: { amount: 0.6, from: "random" },
-                ease: "power2.out"
-            },
-            "-=0.2" // Начинаем чуть раньше, чем Hero до конца улетит
-        );
-
-        // Появление текста "Generated Future"
-        tl.from(".reveal-content", {
-            y: 100,
-            opacity: 0,
-            scale: 0.9,
-            duration: 0.8,
-        }, "-=0.4");
-
-        // --- ЭТАП 3: Пауза (Держим контент на экране) ---
-        tl.to({}, { duration: 1 }); // Пустая анимация для задержки внимания
-
-        // --- ЭТАП 4: Уход колонок ВВЕРХ (Выход из секции) ---
-        tl.to(columns, {
-            yPercent: -100,
-            stagger: { amount: 0.6, from: "random" },
-            ease: "power2.inIn"
-        });
-
-        tl.to(".reveal-content", {
-            opacity: 0,
-            y: -50,
-            duration: 0.4
-        }, "<"); // Начинаем одновременно с уходом колонок
-
-
-        // Интерактив за мышкой для первой секции
-        const handleMouseMove = (e: MouseEvent) => {
-            const { clientX, clientY } = e;
-            const xPos = (clientX / window.innerWidth - 0.5) * 30;
-            const yPos = (clientY / window.innerHeight - 0.5) * 30;
-            gsap.to(".hero-content", { x: xPos, y: yPos, duration: 1.5, ease: "power2.out" });
-        };
-
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+            filter: "blur(10px)",
+            ease: "power2.inOut"
+        }, 0)
+            .to(videoWrapperRef.current, {
+                // Анимируем из правой части в центр и на весь экран
+                left: "50%",
+                top: "50%",
+                xPercent: -50,
+                yPercent: -50,
+                width: "100vw",
+                height: "100vh",
+                borderRadius: "0px",
+                ease: "power2.inOut"
+            }, 0);
 
     }, { scope: containerRef });
 
     return (
-        <div ref={containerRef} className="relative z-10 bg-[var(--bg-main)] overflow-hidden">
+        <div ref={containerRef} className="relative w-full h-screen bg-[var(--bg-main)] overflow-hidden font-sans">
+            {/* СЕТКА / ГРИД (опционально для стиля Sanarip) */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                 style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '50px 50px' }}
+            />
 
-            {/* СЕКЦИЯ 1: HERO */}
-            <section className="relative h-screen w-full flex flex-col justify-center px-4 md:px-12 overflow-hidden z-0 bg-[var(--bg-main)]">
-                <div className="hero-content w-full max-w-[1400px] mx-auto">
-                    <h1 className="font-bold leading-[0.85] tracking-tighter uppercase text-[var(--text-main)]">
-                        <div className="overflow-hidden mb-2">
-                            <span className="hero-line block text-[15vw] lg:text-[160px]">Digital</span>
-                        </div>
-                        <div className="overflow-hidden mb-2">
-                            <span className="hero-line block text-[10.5vw] lg:text-[120px]">Transformation</span>
+            <section className="relative h-full w-full flex items-center px-6 md:px-12 z-10 max-w-[1440px] mx-auto">
+
+                {/* ТЕКСТОВЫЙ БЛОК */}
+                <div ref={textContentRef} className="max-w-[700px] z-20 relative">
+                    <h1 className="font-bold leading-[0.9] tracking-tighter text-[var(--text-main)] mb-10">
+                        <div className="overflow-hidden">
+                            <span className="block text-[8vw] lg:text-[72px] uppercase">Комплексные</span>
                         </div>
                         <div className="overflow-hidden">
-                            <span className="hero-line block text-[13vw] lg:text-[160px] text-[var(--brand-primary)] italic">Sanarip 2026</span>
+                            <span className="block text-[8vw] lg:text-[72px] text-[var(--brand-primary)] italic uppercase">Цифровые</span>
+                        </div>
+                        <div className="overflow-hidden">
+                            <span className="block text-[8vw] lg:text-[72px] uppercase">решения для</span>
+                        </div>
+                        <div className="overflow-hidden">
+                            <span className="block text-[8vw] lg:text-[72px] uppercase">развития</span>
                         </div>
                     </h1>
-                </div>
-                {/* В светлой теме шар делаем очень нежным */}
-                <div ref={bgRef} className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[70vw] h-[70vw] bg-blue-100 blur-[120px] rounded-full z-[-1] opacity-50" />
-            </section>
 
-            {/* СЛОЙ КОЛОНОК (Светлые) */}
-            <div className="absolute inset-0 flex pointer-events-none z-20 h-screen w-full">
-                {[...Array(7)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="reveal-col flex-1 relative h-full bg-[var(--bg-secondary)] last:border-r-0"
-                    />
-                ))}
-            </div>
-
-             {/*СЕКЦИЯ 2: CONTENT */}
-            <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none h-screen w-full bg-transparent">
-                <div className="reveal-content max-w-4xl text-[var(--text-main)] px-8 text-center">
-                    <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-8">
-                        The Future <br /> <span className="text-[var(--brand-primary)]">Generated</span>
-                    </h2>
-                    <p className="text-[var(--text-muted)] text-xl md:text-2xl max-w-xl mx-auto font-light">
-                        Our infrastructure is built for the next generation of AI.
+                    <p className="max-w-[550px] text-[15px] md:text-[18px] font-medium text-[var(--text-muted)] leading-relaxed">
+                        Мы создаем устойчивые цифровые экосистемы: от разработки сложных веб-платформ до производства профессионального видеоконтента.
                     </p>
                 </div>
-            </div>
+
+                {/* КОНТЕЙНЕР С ВИДЕО (Абсолютное позиционирование) */}
+                <div
+                    ref={videoWrapperRef}
+                    className="absolute overflow-hidden rounded-3xl border border-[var(--border-color)] shadow-2xl z-0"
+                    style={{
+                        width: '480px',
+                        height: '520px',
+                        right: '10%', // Начальная позиция справа
+                        top: '50%',
+                        transform: 'translateY(-50%)', // Центрируем по вертикали изначально
+                    }}
+                >
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover"
+                    >
+                        <source src="/videos/hero-section-video.mp4" type="video/mp4" />
+                    </video>
+
+                    {/* Финальный титр (появится в конце анимации) */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-700 bg-black/20">
+                        <h2 className="text-white text-5xl font-black uppercase tracking-tighter">
+                            Sanarip Dolboor
+                        </h2>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }

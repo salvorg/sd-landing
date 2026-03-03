@@ -2,6 +2,13 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+
+const links = [
+    { path: '/services', label: 'Услуги'},
+    { path: '/projects', label: 'Проекты' },
+    { path: '/about', label: 'О компании'}
+]
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -25,8 +32,7 @@ export default function Header() {
         >
             <div className="w-full max-w-[1400px] mx-auto flex justify-between items-center">
 
-                {/* ЛОГОТИП (Цвета адаптированы под светлую тему) */}
-                <div className="flex items-center gap-4 cursor-pointer group">
+                <Link href='/' className="flex items-center gap-4 cursor-pointer group">
                     <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 [perspective:1000px]">
                         <div className={cn(
                             "relative w-full h-full transition-transform duration-1000 [transform-style:preserve-3d]",
@@ -55,23 +61,23 @@ export default function Header() {
                             Dolboor
                         </span>
                     </div>
-                </div>
+                </Link>
 
                 {/* НАВИГАЦИЯ (Инверсия цветов) */}
                 <div className={cn(
                     "hidden md:flex items-center space-x-10 text-sm font-bold uppercase tracking-widest transition-colors duration-500",
                     isScrolled ? "text-black" : "text-zinc-800"
                 )}>
-                    {["Projects", "Vision", "Data"].map((item) => (
-                        <a key={item} href={`#${item.toLowerCase()}`} className="relative group overflow-hidden py-1">
-                            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-full">{item}</span>
-                            <span className="absolute left-0 translate-y-full transition-transform duration-300 group-hover:translate-y-0 text-blue-600">{item}</span>
+                    {links.map((item) => (
+                        <a key={item.path} href={item.path} className="relative group overflow-hidden py-1">
+                            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-full">{item.label}</span>
+                            <span className="absolute left-0 translate-y-full transition-transform duration-300 group-hover:translate-y-0 text-blue-600">{item.label}</span>
                         </a>
                     ))}
 
-                    <button className="text-[10px] border border-black/10 rounded-md px-2 py-1 hover:bg-black hover:text-white transition-colors">
-                        KG / RU
-                    </button>
+                    {/*<button className="text-[10px] border border-black/10 rounded-md px-2 py-1 hover:bg-black hover:text-white transition-colors">*/}
+                    {/*    KG / RU*/}
+                    {/*</button>*/}
 
                     <a href="#contact" className="bg-blue-600 text-white px-6 py-2.5 rounded-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">
                         Contact

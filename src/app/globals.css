@@ -3,6 +3,31 @@
 @theme {
   /* Регистрация шрифта в системе Tailwind */
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui;
+
+  @keyframes infinite-scroll {
+    /* Используем 0.1px или 1px, чтобы принудительно включить субпиксельное сглаживание */
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+  /* Увеличьте время (например, до 40s), если дрыганье заметно на большой скорости */
+  --animate-infinite-scroll: infinite-scroll 40s linear infinite;
+}
+
+.animate-infinite-scroll {
+  display: flex;
+  width: max-content;
+  /* Важно: удалите или измените contain, если он мешает расчету ширины */
+  contain: layout;
+  /* Добавляем это для максимально плавного рендеринга текста и картинок */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.animate-infinite-scroll > div {
+  /* Убираем will-change с opacity, оставляем только для трансформации, если нужно */
+  will-change: transform;
+  /* Убедитесь, что изображения не меняют размер при наведении */
+  transform: translateZ(0);
 }
 
 html.lenis {

@@ -1,8 +1,9 @@
 "use client";
-import { useRef } from "react";
+import {useRef} from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {useGSAP} from "@gsap/react";
+import {ScrollTrigger} from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -11,20 +12,20 @@ if (typeof window !== "undefined") {
 const helpItems = [
     {
         tag: "01",
-        title: "Разработка веб-приложений и мобильных приложений",
-        desc: "Кроссплатформенные, адаптивные, нативные и гибридные приложения с использованием новейших технологий в разработке приложений.",
+        title: "Разработка IT-платформ и систем",
+        desc: "Разработка интуитивно понятных интерфейсов (UI/UX) и функциональной серверной части (Backend) для государственных и международных структур. Развертывание и глубокая кастомизация систем обучения под ключ.",
         tech: ["React", "Next.js", "Mobile"]
     },
     {
         tag: "02",
-        title: "Услуги облачной инфраструктуры",
-        desc: "Полное внедрение облачных технологий, миграция и расширенные услуги поддержки.",
+        title: "IT-инфраструктура и Облачные решения",
+        desc: "Разработка интуитивно понятных интерфейсов (UI/UX) и функциональной серверной части (Backend) для государственных и международных структур. Развертывание и глубокая кастомизация систем обучения под ключ.",
         tech: ["Cloud", "DevOps", "Migration"]
     },
     {
         tag: "03",
-        title: "Управление корпоративным контентом",
-        desc: "Интуитивно понятные и масштабируемые системы управления контентом для стартапов и предприятий.",
+        title: "От концепции до готового ролика",
+        desc: "Разработка интуитивно понятных интерфейсов (UI/UX) и функциональной серверной части (Backend) для государственных и международных структур. Развертывание и глубокая кастомизация систем обучения под ключ.",
         tech: ["CMS", "Architecture", "Scalability"]
     },
     {
@@ -33,18 +34,18 @@ const helpItems = [
         desc: "Решения для управления логистикой и телематики для кабин сотрудников, перемещения имущества, отслеживания машин скорой помощи и перемещения корпоративных ресурсов.",
         tech: ["IoT", "Logistics", "Tracking"]
     },
-    {
-        tag: "05",
-        title: "Управление корпоративными активами",
-        desc: "Управление процессами технического обслуживания – профилактическое, техническое обслуживание по состоянию/корректирующее и оперативное техническое обслуживание.",
-        tech: ["Assets", "Maintenance", "Operations"]
-    },
-    {
-        tag: "06",
-        title: "Бизнес-аналитика и аналитика",
-        desc: "Инструменты для работы с большими данными и аналитики, которые поразят ваших клиентов персонализированным и контекстным опытом.",
-        tech: ["Big Data", "BI", "Analytics"]
-    },
+    // {
+    //     tag: "05",
+    //     title: "Управление корпоративными активами",
+    //     desc: "Управление процессами технического обслуживания – профилактическое, техническое обслуживание по состоянию/корректирующее и оперативное техническое обслуживание.",
+    //     tech: ["Assets", "Maintenance", "Operations"]
+    // },
+    // {
+    //     tag: "06",
+    //     title: "Бизнес-аналитика и аналитика",
+    //     desc: "Инструменты для работы с большими данными и аналитики, которые поразят ваших клиентов персонализированным и контекстным опытом.",
+    //     tech: ["Big Data", "BI", "Analytics"]
+    // },
 ];
 
 export default function OurHelpSection() {
@@ -62,6 +63,17 @@ export default function OurHelpSection() {
             pin: leftRef.current,
             pinSpacing: false,
             toggleActions: "play pause resume reset"
+        });
+
+        gsap.to(".logo-spin", {
+            rotation: 360, // Полный оборот (можно поставить 720 для большей скорости)
+            ease: "none",
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top top",      // Начинаем крутить, когда секция зафиксировалась
+                end: "bottom bottom",  // Заканчиваем, когда секция расфиксировалась
+                scrub: 1,              // Плавная привязка к позиции скролла
+            }
         });
 
         const cards = gsap.utils.toArray<HTMLElement>(".help-card");
@@ -88,7 +100,7 @@ export default function OurHelpSection() {
             // Легкая анимация для фонового номера (по желанию)
             if (bgTag) {
                 gsap.fromTo(bgTag,
-                    { opacity: 0, x: 50 },
+                    {opacity: 0, x: 50},
                     {
                         opacity: 1,
                         x: 0,
@@ -105,46 +117,57 @@ export default function OurHelpSection() {
         // Освежаем ScrollTrigger после рендера всех карточек
         ScrollTrigger.refresh();
 
-    }, { scope: sectionRef });
+    }, {scope: sectionRef});
 
     return (
         <section
             ref={sectionRef}
             className="relative w-full flex flex-col md:flex-row border-t border-[var(--border-subtle)]"
-            style={{ backgroundColor: 'var(--bg-primary)' }}
+            style={{backgroundColor: 'var(--bg-primary)'}}
         >
+            {/*<Image*/}
+            {/*    src="/images/cell-bg.svg"*/}
+            {/*    alt="Background"*/}
+            {/*    fill*/}
+            {/*    priority*/}
+            {/*    className="object-cover z-0 opacity-50" // object-cover заменяет background-size: cover*/}
+            {/*/>*/}
 
             {/* ЛЕВАЯ ЧАСТЬ (Pinned) */}
             <div
                 ref={leftRef}
-                // Добавляем pt-[var(--header-height)] чтобы контент не ушел под шапку
-                className="md:w-1/3 h-screen hidden md:flex flex-col justify-between p-16 pt-[calc(var(--header-height)+4rem)] border-r border-[var(--border-subtle)]"
-                style={{ backgroundColor: 'var(--bg-secondary)' }}
+                className="md:w-1/3 h-screen hidden md:flex flex-col justify-between pl-30 pr-16 pt-[calc(var(--header-height)+4rem)] border-r border-[var(--border-subtle)]"
             >
                 <div>
-                    <span className="text-[var(--brand-blue)] font-mono text-xs tracking-[0.4em] uppercase mb-6 block font-bold">
-                        Our Expertise
-                    </span>
-                    <h2 className="text-6xl font-black uppercase tracking-tighter leading-[0.9] text-[var(--text-main)]">
-                        Чем мы <br />
+                    <span
+                        className="text-[var(--brand-blue)] font-mono text-xs tracking-[0.4em] uppercase mb-6 block font-bold">Our Expertise</span>
+                    <h2 className="text-8xl font-black uppercase tracking-tighter leading-[0.9] text-[var(--text-main)] mb-12">
+                        Наши <br/>
                         <span
                             className="text-transparent"
-                            style={{ WebkitTextStroke: '1px var(--text-muted)', opacity: 0.4 }}
-                        >
-                            помогаем
-                        </span>
+                            style={{WebkitTextStroke: '1px var(--text-main)', opacity: 0.4}}
+                        >Услуги</span>
                     </h2>
+
+                    {/* КОНТЕЙНЕР ДЛЯ ЛОГОТИПА */}
+                    <div className="flex justify-center items-center relative group">
+                        {/* СЛОЙ СВЕЧЕНИЯ (Сзади) — теперь желтый */}
+                        {/*<div className="absolute inset-0 bg-[#f59e0b] blur-[100px] opacity-20 rounded-full scale-150 group-hover:opacity-40 transition-opacity duration-1000" />*/}
+
+                        {/* КОНТЕЙНЕР ЛОГОТИПА */}
+                        <div className="logo-rotate-container relative w-62 h-62 z-10">
+                            <Image
+                                src="/images/logo/sd-blue.png" // Если сам логотип синий, желтое свечение создаст интересный контраст. Если логотип белый или золотой, эффект будет еще сильнее.
+                                alt="Sanarip Logo Icon"
+                                fill
+                                className="object-contain logo-spin"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                        {/*<div className="w-1.5 h-1.5 bg-[var(--brand-blue)] rounded-full animate-pulse" />*/}
-                        <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold">System_Online</span>
-                    </div>
-                    <p className="text-[var(--text-muted)] font-mono text-[10px] leading-relaxed uppercase tracking-[0.2em]">
-                        [ 42.87° N, 74.59° E ] <br />
-                        Bishkek_Digital_Hub
-                    </p>
+                    {/* ... твой нижний блок с координатами ... */}
                 </div>
             </div>
 
@@ -153,7 +176,7 @@ export default function OurHelpSection() {
                 {helpItems.map((item, i) => (
                     <div
                         key={i}
-                        className="help-card relative h-screen w-full flex items-center px-8 md:px-24 pt-[var(--header-height)] border-b border-[var(--border-subtle)] overflow-hidden bg-[var(--bg-primary)]"
+                        className="help-card relative h-screen w-full flex items-center px-8 md:px-24 pt-[var(--header-height)] border-b border-[var(--border-subtle)] overflow-hidden"
                     >
                         <span
                             className="absolute -right-10 -bottom-16 text-[38vw] font-black ..."
@@ -189,10 +212,15 @@ export default function OurHelpSection() {
                                 {item.desc}
                             </p>
 
-                            <button className="group flex items-center gap-6 text-[var(--text-main)] font-mono text-[10px] uppercase tracking-[0.4em] hover:text-[var(--brand-blue)] transition-all duration-300">
-                                <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)] group-hover:border-[var(--brand-blue)] group-hover:bg-[var(--brand-blue)] group-hover:text-white transition-all duration-500">
-                                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-1 transition-transform">
-                                        <path d="M1 6H11M11 6L6 1M11 6L6 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <button
+                                className="group flex items-center gap-6 text-[var(--text-main)] font-mono text-[10px] uppercase tracking-[0.4em] hover:text-[var(--brand-blue)] transition-all duration-300">
+                                <span
+                                    className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)] group-hover:border-[var(--brand-blue)] group-hover:bg-[var(--brand-blue)] group-hover:text-white transition-all duration-500">
+                                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         className="group-hover:translate-x-1 transition-transform">
+                                        <path d="M1 6H11M11 6L6 1M11 6L6 11" stroke="currentColor" strokeWidth="1.5"
+                                              strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </span>
                                 <span className="font-bold">Explore Details</span>

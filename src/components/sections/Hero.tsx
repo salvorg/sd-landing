@@ -16,24 +16,35 @@ export default function HeroSection() {
     useGSAP(() => {
         if (!containerRef.current || !videoWrapperRef.current || !textContentRef.current) return;
 
+        const lines = textContentRef.current.querySelectorAll('.block.uppercase');
+        const paragraph = textContentRef.current.querySelector('p');
+        const columns = gsap.utils.toArray<HTMLElement>(".reveal-col");
+
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top",
-                end: "+=150%",
+                end: "+=300%", // Увеличили путь для двух этапов анимации
                 pin: true,
                 scrub: 1,
             }
         });
 
-        tl.to(textContentRef.current, {
-            x: -200,      // Немного уводим влево
+        // ЭТАП 1: Текст улетает, Видео расширяется
+        tl.to(lines, {
+            x: -1200,
             opacity: 0,
-            filter: "blur(10px)",
+            filter: "blur(15px)",
+            stagger: { amount: 0.05, from: "random" },
             ease: "power2.inOut"
         }, 0)
+            .to(paragraph, {
+                x: -800,
+                opacity: 0,
+                filter: "blur(5px)",
+                ease: "power2.inOut"
+            }, 0)
             .to(videoWrapperRef.current, {
-                // Анимируем из правой части в центр и на весь экран
                 left: "50%",
                 top: "50%",
                 xPercent: -50,
@@ -44,69 +55,78 @@ export default function HeroSection() {
                 ease: "power2.inOut"
             }, 0);
 
+        // ЭТАП 2: Колонны закрывают видео
+        // Ставим их в начальное положение (внизу за экраном)
+        tl.set(columns, { yPercent: 100, opacity: 1 }, ">");
+
+        tl.to(columns, {
+            yPercent: 0,
+            stagger: {
+                amount: 0.5,
+                from: "random"
+            },
+            ease: "power2.out",
+            duration: 1
+        });
+
+        // ЭТАП 3: Колонны уходят вверх (открывая следующую секцию/карусель)
+        // tl.to(columns, {
+        //     yPercent: -100,
+        //     stagger: {
+        //         amount: 0.5,
+        //         from: "left"
+        //     },
+        //     ease: "power2.in",
+        //     duration: 1
+        // }, "+=0.5"); // Небольшая пауза перед уходом
+
     }, { scope: containerRef });
 
     return (
         <div ref={containerRef} className="relative w-full h-screen bg-[var(--bg-main)] overflow-hidden font-sans">
-            {/* СЕТКА / ГРИД (опционально для стиля Sanarip) */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                 style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '50px 50px' }}
-            />
 
             <section className="relative h-full w-full flex items-center px-6 md:px-12 z-10 max-w-[1440px] mx-auto">
-
                 {/* ТЕКСТОВЫЙ БЛОК */}
-                <div ref={textContentRef} className="max-w-[700px] z-20 relative">
+                <div ref={textContentRef} className="max-w-[700px] z-20 relative pointer-events-none">
                     <h1 className="font-bold leading-[0.9] tracking-tighter text-[var(--text-main)] mb-10">
-                        <div className="overflow-hidden">
-                            <span className="block text-[8vw] lg:text-[72px] uppercase">Комплексные</span>
-                        </div>
-                        <div className="overflow-hidden">
-                            <span className="block text-[8vw] lg:text-[72px] text-[var(--brand-primary)] italic uppercase">Цифровые</span>
-                        </div>
-                        <div className="overflow-hidden">
-                            <span className="block text-[8vw] lg:text-[72px] uppercase">решения для</span>
-                        </div>
-                        <div className="overflow-hidden">
-                            <span className="block text-[8vw] lg:text-[72px] uppercase">развития</span>
-                        </div>
+                        <span className="block text-[8vw] lg:text-[72px] uppercase">Комплексные</span>
+                        <span className="block text-[8vw] lg:text-[72px] text-[var(--brand-primary)] italic uppercase">Цифровые</span>
+                        <span className="block text-[8vw] lg:text-[72px] uppercase">решения для</span>
+                        <span className="block text-[8vw] lg:text-[72px] uppercase">развития</span>
                     </h1>
-
                     <p className="max-w-[550px] text-[15px] md:text-[18px] font-medium text-[var(--text-muted)] leading-relaxed">
                         Мы создаем устойчивые цифровые экосистемы: от разработки сложных веб-платформ до производства профессионального видеоконтента.
                     </p>
                 </div>
 
-                {/* КОНТЕЙНЕР С ВИДЕО (Абсолютное позиционирование) */}
+                {/* КОНТЕЙНЕР С ВИДЕО */}
                 <div
                     ref={videoWrapperRef}
                     className="absolute overflow-hidden rounded-3xl border border-[var(--border-color)] shadow-2xl z-0"
                     style={{
                         width: '480px',
                         height: '520px',
-                        right: '10%', // Начальная позиция справа
+                        right: '10%',
                         top: '50%',
-                        transform: 'translateY(-50%)', // Центрируем по вертикали изначально
+                        transform: 'translateY(-50%)',
                     }}
                 >
-                    <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="absolute inset-0 w-full h-full object-cover"
-                    >
-                        <source src="/videos/hero-section-video.mp4" type="video/mp4" />
+                    <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+                        <source src="/videos/hero-section-video.mp4" type="video/mp4"/>
                     </video>
-
-                    {/* Финальный титр (появится в конце анимации) */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-700 bg-black/20">
-                        <h2 className="text-white text-5xl font-black uppercase tracking-tighter">
-                            Sanarip Dolboor
-                        </h2>
-                    </div>
                 </div>
             </section>
+
+            {/* СЛОЙ КОЛОНН (Поверх всего) */}
+            <div className="absolute inset-0 flex pointer-events-none z-50 h-screen w-full">
+                {[...Array(6)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="reveal-col flex-1 relative h-full bg-[var(--bg-main)]"
+                        style={{ opacity: 0 }}
+                    />
+                ))}
+            </div>
         </div>
     );
 }

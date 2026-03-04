@@ -1,39 +1,73 @@
 "use client";
-import React, { useRef, useEffect } from 'react';
+import React, {useRef, useEffect} from 'react';
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {useGSAP} from "@gsap/react";
+import {ScrollTrigger} from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
 
 const stats = [
-    { value: 6, suffix: "+", label: "Лет успешного опыта работы с международными донорами и госсектором.", gradient: "from-[#FF4A48] to-[#FF4A48]" },
-    { value: 150, suffix: "+", label: "Создано обучающих роликов и профессионального видеоконтента.", gradient: "from-[#8059E1] to-[#0068E0]" },
-    { value: 40, suffix: "K+", label: "Учителей и специалистов прошли обучение на наших платформах.", gradient: "from-[#0068E0] to-[#0068E0]" }
+    {
+        value: 40,
+        suffix: "K+",
+        label: "Учителей и специалистов прошли обучение на наших платформах.",
+        gradient: "from-[#FF4A48] to-[#FF4A48]"
+    },
+    {
+        value: 150,
+        suffix: "+",
+        label: "Создано обучающих роликов и профессионального видеоконтента.",
+        gradient: "from-[#0068E0] to-[#8059E1]"
+    },
+    {
+        value: 6,
+        suffix: "+",
+        label: "Лет успешного опыта работы с международными донорами и госсектором.",
+        gradient: "from-[#0068E0] to-[#0068E0]"
+    }
 ];
 
 export default function StatsSection() {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const offscreenNodes = useRef<HTMLCanvasElement[]>([]);
+    const contentRef = useRef<HTMLDivElement>(null); // Реф для контента
+    const cachedNodes = useRef<HTMLCanvasElement[]>([]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d', { alpha: true });
+        const ctx = canvas.getContext('2d', {alpha: true});
         if (!ctx) return;
 
-        const createCache = () => {
-            const colors = [
-                { r: 255, g: 74, b: 72 },
-                { r: 128, g: 89, b: 225 },
-                { r: 0, g: 104, b: 224 }
-            ];
+        const colorStops = [
+            {r: 255, g: 74, b: 72},  // Red
+            {r: 128, g: 89, b: 225}, // Purple
+            {r: 0, g: 104, b: 224}   // Blue
+        ];
 
+        const getInterpolatedColor = (t: number) => {
+            t = Math.max(0, Math.min(1, t));
+            const scaledT = t * (colorStops.length - 1);
+            const i = Math.floor(scaledT);
+            const f = scaledT - i;
+            if (i >= colorStops.length - 1) return colorStops[colorStops.length - 1];
+            const c1 = colorStops[i];
+            const c2 = colorStops[i + 1];
+            return {
+                r: Math.round(c1.r + (c2.r - c1.r) * f),
+                g: Math.round(c1.g + (c2.g - c1.g) * f),
+                b: Math.round(c1.b + (c2.b - c1.b) * f)
+            };
+        };
+
+        // Создаем 30 цветовых ступеней, в каждой по 3 типа треугольника (итого 90 пре-рендеров)
+        const createCache = () => {
+            const steps = 30;
             const nodes: HTMLCanvasElement[] = [];
-            colors.forEach(color => {
+            for (let i = 0; i <= steps; i++) {
+                const color = getInterpolatedColor(i / steps);
                 for (let type = 0; type < 3; type++) {
                     const offCanvas = document.createElement('canvas');
                     offCanvas.width = 60;
@@ -45,22 +79,39 @@ export default function StatsSection() {
                     oCtx.lineJoin = "round";
                     oCtx.translate(30, 30);
                     oCtx.beginPath();
-
                     if (type === 0) {
-                        oCtx.moveTo(-10, -15); oCtx.lineTo(12, 10); oCtx.lineTo(-20, 16); oCtx.closePath();
-                        oCtx.moveTo(-20, 16); oCtx.lineTo(-4, 3); oCtx.lineTo(12, 10); oCtx.lineTo(-8, -16);
+                        oCtx.moveTo(-10, -15);
+                        oCtx.lineTo(12, 10);
+                        oCtx.lineTo(-20, 16);
+                        oCtx.closePath();
+                        oCtx.moveTo(-20, 16);
+                        oCtx.lineTo(-4, 3);
+                        oCtx.lineTo(12, 10);
+                        oCtx.lineTo(-8, -16);
                     } else if (type === 1) {
-                        oCtx.moveTo(10, -18); oCtx.lineTo(9, 16); oCtx.lineTo(-20, -2); oCtx.closePath();
-                        oCtx.moveTo(-20, -2); oCtx.lineTo(-10, -3); oCtx.lineTo(10, 16); oCtx.lineTo(11, -18);
+                        oCtx.moveTo(10, -18);
+                        oCtx.lineTo(9, 16);
+                        oCtx.lineTo(-20, -2);
+                        oCtx.closePath();
+                        oCtx.moveTo(-20, -2);
+                        oCtx.lineTo(-10, -3);
+                        oCtx.lineTo(10, 16);
+                        oCtx.lineTo(11, -18);
                     } else {
-                        oCtx.moveTo(10, -18); oCtx.lineTo(9, 16); oCtx.lineTo(-20, -2); oCtx.closePath();
-                        oCtx.moveTo(-20, -2); oCtx.lineTo(6, -2); oCtx.lineTo(10, 16); oCtx.lineTo(11, -18);
+                        oCtx.moveTo(10, -18);
+                        oCtx.lineTo(9, 16);
+                        oCtx.lineTo(-20, -2);
+                        oCtx.closePath();
+                        oCtx.moveTo(-20, -2);
+                        oCtx.lineTo(6, -2);
+                        oCtx.lineTo(10, 16);
+                        oCtx.lineTo(11, -18);
                     }
                     oCtx.stroke();
                     nodes.push(offCanvas);
                 }
-            });
-            offscreenNodes.current = nodes;
+            }
+            cachedNodes.current = nodes;
         };
 
         createCache();
@@ -70,49 +121,55 @@ export default function StatsSection() {
         const mapPath = new Path2D(svgPathString);
         const svgWidth = 1060, svgHeight = 522;
         let scale = 1, offsetX = 0, offsetY = 0;
-        const mouse = { x: -2000, y: -2000, radius: 180 }; // Увеличен радиус для плавности
+        const mouse = {x: -2000, y: -2000, radius: 180};
 
         class TriangleParticle {
-            svgX: number; svgY: number; x: number; y: number;
-            size: number; angle: number; density: number; nodeIdx: number;
+            svgX: number;
+            svgY: number;
+            x: number;
+            y: number;
+            size: number;
+            angle: number;
+            density: number;
+            nodeIdx: number;
 
             constructor(svgX: number, svgY: number) {
-                this.svgX = svgX; this.svgY = svgY;
-                this.x = 0; this.y = 0;
+                this.svgX = svgX;
+                this.svgY = svgY;
+                this.x = 0;
+                this.y = 0;
                 this.size = (Math.random() * 12) + 8;
                 this.angle = Math.random() * 360;
-                this.density = (Math.random() * 15) + 5; // Слегка уменьшена плотность
+                this.density = (Math.random() * 15) + 5;
 
-                const ratio = svgX / svgWidth;
-                const colorRange = ratio < 0.33 ? 0 : (ratio < 0.66 ? 1 : 2);
+                // Выбираем индекс из кэша на основе позиции (30 ступеней * 3 типа)
+                const t = svgX / svgWidth;
+                const stepIdx = Math.round(t * 30);
                 const type = Math.floor(Math.random() * 3);
-                this.nodeIdx = (colorRange * 3) + type;
+                this.nodeIdx = (stepIdx * 3) + type;
             }
 
             update() {
-                const hX = this.svgX * scale + offsetX;
-                const hY = this.svgY * scale + offsetY;
+                const targetX = this.svgX * scale + offsetX;
+                const targetY = this.svgY * scale + offsetY;
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distSq = dx * dx + dy * dy;
-                const rSq = mouse.radius * mouse.radius;
 
-                if (distSq < rSq) {
+                if (distSq < 32400) { // 180^2
                     const dist = Math.sqrt(distSq);
-                    // Плавное затухание силы (чем дальше от центра мыши, тем слабее)
-                    const force = (mouse.radius - dist) / mouse.radius;
+                    const force = (180 - dist) / 180;
                     this.x -= (dx / dist) * force * this.density;
                     this.y -= (dy / dist) * force * this.density;
                     this.angle += force * 10;
                 } else {
-                    // Возврат к цели
-                    this.x += (hX - this.x) * 0.04;
-                    this.y += (hY - this.y) * 0.04;
+                    this.x += (targetX - this.x) * 0.04;
+                    this.y += (targetY - this.y) * 0.04;
                 }
             }
 
             draw() {
-                const img = offscreenNodes.current[this.nodeIdx];
+                const img = cachedNodes.current[this.nodeIdx];
                 if (!img) return;
                 const s = (this.size / 30) * scale;
                 ctx!.save();
@@ -133,13 +190,15 @@ export default function StatsSection() {
             offsetY = (canvas.height - svgHeight * scale) / 2;
 
             particlesArray = [];
-            const maxP = window.innerWidth < 768 ? 400 : 1800;
+            const isMobile = window.innerWidth < 768;
+            const maxP = isMobile ? 500 : 1800;
             let att = 0;
-            while (particlesArray.length < maxP && att < 35000) {
+            while (particlesArray.length < maxP && att < 40000) {
                 const tx = Math.random() * svgWidth, ty = Math.random() * svgHeight;
                 if (ctx.isPointInPath(mapPath, tx, ty)) {
                     const p = new TriangleParticle(tx, ty);
-                    p.x = tx * scale + offsetX; p.y = ty * scale + offsetY;
+                    p.x = tx * scale + offsetX;
+                    p.y = ty * scale + offsetY;
                     particlesArray.push(p);
                 }
                 att++;
@@ -149,23 +208,39 @@ export default function StatsSection() {
         let frame: number;
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
+            for (let i = 0, len = particlesArray.length; i < len; i++) {
                 particlesArray[i].update();
                 particlesArray[i].draw();
             }
             frame = requestAnimationFrame(animate);
         };
 
-        // КОРРЕКТНОЕ ОПРЕДЕЛЕНИЕ КООРДИНАТ
         const handleMouseMove = (e: MouseEvent) => {
             const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Обновляем координаты для взаимодействия с частицами
+            mouse.x = mouseX;
+            mouse.y = mouseY;
+
+            // Смещение контента для глубины (параллакс)
+            if (contentRef.current) {
+                const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+                const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+                gsap.to(contentRef.current, {
+                    x: moveX,
+                    y: moveY,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+            }
         };
 
         window.addEventListener('resize', init);
         window.addEventListener('mousemove', handleMouseMove);
-        init(); animate();
+        init();
+        animate();
 
         return () => {
             cancelAnimationFrame(frame);
@@ -178,26 +253,39 @@ export default function StatsSection() {
         const numbers = containerRef.current?.querySelectorAll(".stat-number");
         numbers?.forEach((num) => {
             const target = parseInt(num.getAttribute("data-target") || "0");
-            gsap.fromTo(num, { innerText: 0 }, {
-                innerText: target, duration: 2, snap: { innerText: 1 }, ease: "power2.out",
-                scrollTrigger: { trigger: num, start: "top 90%" }
+            gsap.fromTo(num, {innerText: 0}, {
+                innerText: target, duration: 2, snap: {innerText: 1}, ease: "power2.out",
+                scrollTrigger: {trigger: num, start: "top 90%"}
             });
         });
-    }, { scope: containerRef });
+    }, {scope: containerRef});
 
     return (
-        <section ref={containerRef} className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden">
-            <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-40 pointer-events-none" />
-            <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10 pointer-events-none">
+        <section ref={containerRef}
+                 className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden">
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 z-0 opacity-40 pointer-events-none scale-110"
+                style={{ transform: 'translateZ(-50px)' }}
+            />
+            <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
+                {stats.map((_, i) => (
+                    <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/20 stats-glow"/>
+                ))}
+            </div>
+            <div
+                ref={contentRef}
+                className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10 pointer-events-none">
                 <div className="flex flex-col md:flex-row justify-center items-start md:items-center gap-12">
                     {stats.map((stat, idx) => (
-                        <div key={idx} className="flex flex-col group min-w-[200px] pointer-events-auto">
-                            <div className={`text-[12vw] md:text-[8rem] font-black leading-[0.8] bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent flex items-baseline mb-6`}>
+                        <div key={idx} className="flex flex-col group min-w-[280px] pointer-events-auto">
+                            <div className={`text-[12vw] font-black leading-[0.8] bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent flex items-baseline mb-6 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]`}>
                                 <span className="stat-number" data-target={stat.value}>0</span>
                                 <span className="text-[0.6em]">{stat.suffix}</span>
                             </div>
-                            <div className="w-12 h-[2px] mb-6 bg-[var(--text-muted)] opacity-30 group-hover:w-full transition-all duration-700" />
-                            <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-bold max-w-[260px]">
+                            <div
+                                className="w-12 h-[2px] mb-6 bg-[var(--text-muted)] opacity-30 group-hover:w-full transition-all duration-700"/>
+                            <p className="text-[10px] min-h-[50px] text-[var(--text-muted)] uppercase tracking-wider font-bold max-w-[260px]">
                                 {stat.label}
                             </p>
                         </div>

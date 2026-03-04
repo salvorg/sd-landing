@@ -21,12 +21,23 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const scrollToContact = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const element = document.getElementById('contact');
+        if (element) {
+            element.scrollIntoView({
+                behavior: 'auto',
+                block: 'start',
+            });
+        }
+    };
+
     return (
         <nav
             className={cn(
                 "fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-6 md:px-12 h-[var(--header-height)] flex items-center",
                 isScrolled
-                    ? "bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm" // Светлая тема при скролле
+                    ? "bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm"
                     : "bg-zinc-950/80"
             )}
         >
@@ -77,8 +88,8 @@ export default function Header() {
                             <span className={`absolute left-0 translate-y-full transition-transform duration-300 group-hover:translate-y-0 ${isScrolled ? 'text-blue-600' : 'text-yellow-300'}`}>{item.label}</span>
                         </a>
                     ))}
-                    <button className="bg-blue-600 text-white px-6 py-2.5 rounded-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">
-                        Contact
+                    <button onClick={scrollToContact} className="bg-blue-600 text-white px-6 py-2.5 rounded-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">
+                        Контакты
                     </button>
                 </div>
 

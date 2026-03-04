@@ -34,7 +34,7 @@ export default function ContactUs() {
     };
 
     return (
-        <section className="relative min-h-screen w-full flex flex-col md:flex-row items-center justify-center px-6 md:px-24 py-20 bg-[var(--bg-primary)] overflow-hidden">
+        <section id="contact" className="relative min-h-screen w-full flex flex-col md:flex-row items-center justify-center px-6 md:px-24 py-20 bg-[var(--bg-primary)] overflow-hidden">
             {/* Декоративный фон (опционально) */}
             <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[var(--brand-blue)] rounded-full blur-[120px]" />

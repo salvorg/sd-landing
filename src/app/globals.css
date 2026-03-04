@@ -13,10 +13,10 @@
   --animate-infinite-scroll: infinite-scroll 40s linear infinite;
 }
 
-.segment {
-  transform-box: fill-box;   /* Считает центр относительно самого сегмента, а не всего SVG */
-  transform-origin: center;  /* Устанавливает точку вращения в центр сегмента */
-  display: block;            /* Помогает некоторым браузерам применить трансформацию */
+.stats-glow {
+  filter: blur(80px);
+  opacity: 0.15;
+  mix-blend-mode: screen;
 }
 
 .animate-infinite-scroll {

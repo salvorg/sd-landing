@@ -18,7 +18,7 @@ export default function TrustedBySection() {
     return (
         <section className="relative pt-18 pb-32 bg-[var(--bg-main)] overflow-hidden">
             <div className="max-w-[1440px] mx-auto px-6 mb-12">
-                <p className="text-[10px] text-center font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] opacity-60">
+                <p className="text-[18px] text-center font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] opacity-60">
                     Нам доверяют лидеры
                 </p>
             </div>

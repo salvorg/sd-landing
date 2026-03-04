@@ -44,9 +44,12 @@ export default function HeroSection() {
         });
 
         tl.to([lines, paragraph], {
-            x: -800, // Уменьшил с 1200, чтобы не было слишком резко
+            x: -1200, // Уменьшил с 1200, чтобы не было слишком резко
             opacity: 0,
-            stagger: 0.05,
+            stagger: {
+                amount: 0.10,
+                from: "random"
+            },
             ease: "power2.out", // Мгновенная реакция
             duration: 3
         }, 0)
@@ -56,12 +59,12 @@ export default function HeroSection() {
                 top: "50%",
                 xPercent: -50,
                 yPercent: -50,
-                ease: "power2.inOut", // Плавный вход в полноэкранный режим
-                duration: 3
+                ease: "power2.in", // Плавный вход в полноэкранный режим
+                duration: 2
             }, 0)
             .to(wrappers, {
                 borderRadius: "0px",
-                ease: "power2.inOut",
+                ease: "power2.in",
                 duration: 1.5 // Чуть быстрее, чтобы к середине пути углы уже были острыми
             }, 0);
 
@@ -78,7 +81,7 @@ export default function HeroSection() {
                 rotationX: 15,
                 rotationZ: -4,
                 x: -200,
-                ease: "expo.inOut", // Драматичный, дорогой зум
+                ease: "expo.out", // Драматичный, дорогой зум
                 duration: 6
             }, ">")
     }, {scope: containerRef});
@@ -118,7 +121,7 @@ export default function HeroSection() {
                                         </video>
                                     </div>
                                 ) : (
-                                    <div className="grid-card w-full h-full relative">
+                                    <div className="grid-card w-full h-full relative opacity-0">
                                         <Image src={`https://picsum.photos/seed/${i + 50}/800/600`} alt="work" fill
                                                className="object-cover"/>
                                     </div>

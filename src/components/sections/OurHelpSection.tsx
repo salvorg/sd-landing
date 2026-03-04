@@ -157,7 +157,7 @@ export default function OurHelpSection() {
                         {/* КОНТЕЙНЕР ЛОГОТИПА */}
                         <div className="logo-rotate-container relative w-62 h-62 z-10">
                             <Image
-                                src="/images/logo/sd-blue.png" // Если сам логотип синий, желтое свечение создаст интересный контраст. Если логотип белый или золотой, эффект будет еще сильнее.
+                                src="/images/logo/sd-partial.svg" // Если сам логотип синий, желтое свечение создаст интересный контраст. Если логотип белый или золотой, эффект будет еще сильнее.
                                 alt="Sanarip Logo Icon"
                                 fill
                                 className="object-contain logo-spin"
@@ -166,8 +166,9 @@ export default function OurHelpSection() {
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    {/* ... твой нижний блок с координатами ... */}
+                <div className="pb-12 text-[var(--text-muted)] font-mono text-[10px] uppercase tracking-widest">
+                    {/* Твой блок с координатами или доп. инфо */}
+                    © SANARIP SOLUTIONS
                 </div>
             </div>
 

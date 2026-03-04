@@ -24,7 +24,7 @@ export default function HeroSection() {
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top",
-                end: "+=300%", // Увеличили путь для двух этапов анимации
+                end: "+=300%",
                 pin: true,
                 scrub: 1,
             }
@@ -56,7 +56,6 @@ export default function HeroSection() {
             }, 0);
 
         // ЭТАП 2: Колонны закрывают видео
-        // Ставим их в начальное положение (внизу за экраном)
         tl.set(columns, { yPercent: 100, opacity: 1 }, ">");
 
         tl.to(columns, {
@@ -68,18 +67,6 @@ export default function HeroSection() {
             ease: "power2.out",
             duration: 1
         });
-
-        // ЭТАП 3: Колонны уходят вверх (открывая следующую секцию/карусель)
-        // tl.to(columns, {
-        //     yPercent: -100,
-        //     stagger: {
-        //         amount: 0.5,
-        //         from: "left"
-        //     },
-        //     ease: "power2.in",
-        //     duration: 1
-        // }, "+=0.5"); // Небольшая пауза перед уходом
-
     }, { scope: containerRef });
 
     return (

@@ -1,13 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import {useState, useEffect} from "react";
+import {cn} from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import {motion} from "framer-motion";
 
 const links = [
-    { path: '/services', label: 'Услуги'},
-    { path: '/projects', label: 'Проекты' },
-    { path: '/about', label: 'О компании'}
+    {path: '/services', label: 'Услуги'},
+    {path: '/projects', label: 'Проекты'},
+    {path: '/about', label: 'О компании'}
 ]
 
 export default function Header() {
@@ -43,17 +44,19 @@ export default function Header() {
         >
             <div className="w-full max-w-[1400px] mx-auto flex justify-between items-center">
 
-                <Link href='/' className="flex items-center gap-4 cursor-pointer group">
+                <Link href='/' className="flex items-center gap-2 cursor-pointer group">
                     <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 [perspective:1000px]">
                         <div className={cn(
                             "relative w-full h-full transition-transform duration-1000 [transform-style:preserve-3d]",
                             isScrolled ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]"
                         )}>
                             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
-                                <Image src="/images/logo/sd.webp" alt="Logo" width={48} height={48} priority />
+                                <Image src="/images/logo/sd.webp" alt="Logo" width={48} height={48} priority/>
                             </div>
-                            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                                <Image src="/images/logo/sd-color.webp" alt="Logo Color" width={48} height={48} priority />
+                            <div
+                                className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                                <Image src="/images/logo/sd-color.webp" alt="Logo Color" width={48} height={48}
+                                       priority/>
                             </div>
                         </div>
                     </div>
@@ -63,7 +66,7 @@ export default function Header() {
                             "relative text-xl md:text-2xl font-black tracking-tighter uppercase transition-all duration-700 ease-in-out",
                             isScrolled
                                 // ? "text-transparent bg-clip-text bg-gradient-to-r from-[#FF3B3B] via-[#FF8A00] via-[#FFE600] via-[#14FF00] to-[#0066FF]"
-                                    ? "text-black"
+                                ? "text-black"
                                 : "text-white"
                         )}>
                             SANARIP
@@ -79,15 +82,39 @@ export default function Header() {
 
                 {/* НАВИГАЦИЯ (Инверсия цветов) */}
                 <div className={cn(
-                    "hidden md:flex items-center space-x-10 text-sm font-bold uppercase tracking-widest transition-colors duration-500",
+                    "hidden md:flex items-center space-x-8 text-sm font-bold uppercase tracking-widest transition-colors duration-500",
                     isScrolled ? "text-zinc-800" : "text-white"
                 )}>
-                    {links.map((item) => (
-                        <a key={item.path} href={item.path} className="relative group overflow-hidden ">
-                            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-full">{item.label}</span>
-                            <span className={`absolute left-0 translate-y-full transition-transform duration-300 group-hover:translate-y-0 ${isScrolled ? 'text-blue-600' : 'text-yellow-300'}`}>{item.label}</span>
-                        </a>
-                    ))}
+                    <div className="flex items-center space-x-6 relative">
+                        {links.map((item) => (
+                            <motion.a
+                                key={item.path}
+                                href={item.path}
+                                className="relative px-3 py-2 group overflow-hidden"
+                                whileHover={{y: -2}} // Легкий подъем всей ссылки
+                                whileTap={{y: 0}}
+                            >
+                                {/* Текстовый эффект (оставляем твой, он хорош) */}
+                                <div className="relative z-10 overflow-hidden h-[1.2em]">
+                                    <span
+                                        className="block transition-transform duration-500 group-hover:-translate-y-full">{item.label}</span>
+                                    <span className={cn(
+                                        "absolute left-0 top-0 translate-y-full transition-transform duration-500 group-hover:translate-y-0",
+                                        isScrolled ? 'text-blue-600' : 'text-yellow-400'
+                                    )}>{item.label}</span>
+                                </div>
+
+                                {/* Анимированная линия под ссылкой */}
+                                <motion.div
+                                    className={cn(
+                                        "absolute bottom-0 left-0 h-[2px] w-0 bg-current transition-all duration-300 group-hover:w-full",
+                                        isScrolled ? "bg-blue-600" : "bg-yellow-400"
+                                    )}
+                                />
+                            </motion.a>
+                        ))}
+                    </div>
+
                     <button onClick={scrollToContact} className="bg-blue-600 text-white px-6 py-2.5 rounded-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">
                         Контакты
                     </button>
@@ -95,8 +122,8 @@ export default function Header() {
 
                 {/* Мобильная кнопка (черная для светлой темы) */}
                 <div className="md:hidden w-6 h-6 flex flex-col justify-center gap-1.5 items-end cursor-pointer">
-                    <div className="w-full h-[2px] bg-black" />
-                    <div className="w-2/3 h-[2px] bg-black" />
+                    <div className="w-full h-[2px] bg-black"/>
+                    <div className="w-2/3 h-[2px] bg-black"/>
                 </div>
             </div>
         </nav>

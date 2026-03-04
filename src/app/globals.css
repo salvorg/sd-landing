@@ -13,6 +13,21 @@
   --animate-infinite-scroll: infinite-scroll 40s linear infinite;
 }
 
+html:has(.preloader-container),
+body:has(.preloader-container) {
+  overflow: hidden !important;
+  height: 100%;
+}
+
+html.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Убедись, что нет конфликта с высотой */
+html.lenis {
+  height: auto;
+}
+
 .stats-glow {
   filter: blur(80px);
   opacity: 0.15;

@@ -40,6 +40,7 @@ export default function HeroSection() {
                 end: "+=400%",
                 pin: true,
                 scrub: 1,
+                anticipatePin: 1,
             }
         });
 

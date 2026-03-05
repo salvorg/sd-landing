@@ -9,27 +9,24 @@ export default function AnimatedLogo() {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d', { alpha: true }); // Включаем прозрачность
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
-        // Логические размеры канваса (в CSS-пикселях, с учетом оверфлоу)
         let logicalWidth: number = 0;
         let logicalHeight: number = 0;
         let particlesArray: any[] = [];
         let animationId: number;
         const mouse = { x: -1000, y: -1000 };
 
-        // Множитель размера канваса для вылета частиц
         const CANVAS_OVERFLOW = 1.5;
 
-        // Определяем коэффициент плотности пикселей (минимум 1)
         const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
         const config = {
-            particleCount: 1500, // Увеличим для плотности на ретине
+            particleCount: 1500,
             particleSize: 0.22,
             mouseRadius: 3000,
-            friction: 0.92, // Чуть плавнее
+            friction: 0.92,
             ease: 0.05,
             rotationSpeed: 0.03,
         };
@@ -88,7 +85,7 @@ export default function AnimatedLogo() {
 
                 if (distance < config.mouseRadius) {
                     let angle = Math.atan2(dy, dx);
-                    let force = -config.mouseRadius / Math.sqrt(distance); // Более плавная физика
+                    let force = -config.mouseRadius / Math.sqrt(distance);
                     this.vx += force * Math.cos(angle) * 0.1;
                     this.vy += force * Math.sin(angle) * 0.1;
                     this.rotation += 0.05;
@@ -111,7 +108,6 @@ export default function AnimatedLogo() {
             if (!tCtx) return [];
 
             const baseW = logicalWidth / CANVAS_OVERFLOW;
-            // 1. Округляем ширину и высоту до целых чисел
             const logoW = Math.floor(baseW * 0.95);
             const logoH = Math.floor(logoW * (image.height / image.width));
 
@@ -126,13 +122,10 @@ export default function AnimatedLogo() {
                 const offsetY = (logicalHeight - logoH) / 2;
 
                 const validPixels = [];
-                // Используем шаг 2 для производительности
                 for (let y = 0; y < logoH; y += 2) {
                     for (let x = 0; x < logoW; x += 2) {
-                        // 2. Теперь logoW точно соответствует ширине данных в imageData
                         const idx = (y * logoW + x) * 4;
 
-                        // Проверяем альфа-канал
                         if (pixels[idx + 3] > 128) {
                             validPixels.push({
                                 x: x + offsetX,
@@ -143,10 +136,8 @@ export default function AnimatedLogo() {
                     }
                 }
 
-                // Если точек нет, выходим
                 if (validPixels.length === 0) return [];
 
-                // Набираем нужное количество частиц
                 for (let i = 0; i < amount; i++) {
                     const randomIdx = Math.floor(Math.random() * validPixels.length);
                     points.push(validPixels[randomIdx]);
@@ -167,26 +158,21 @@ export default function AnimatedLogo() {
 
             const dpr = window.devicePixelRatio || 1;
 
-            // УДАЛИЛ 'const', чтобы обновлять внешние переменные, а не создавать локальные
             logicalWidth = rect.width * CANVAS_OVERFLOW;
             logicalHeight = rect.height * CANVAS_OVERFLOW;
 
-            // Устанавливаем физическое разрешение
             canvas.width = logicalWidth * dpr;
             canvas.height = logicalHeight * dpr;
 
-            // Масштабируем контекст
-            ctx.setTransform(1, 0, 0, 1, 0, 0); // Сброс перед повторным масштабированием
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(dpr, dpr);
 
-            // Пересоздаем частицы
             particlesArray = [];
             const logoPts = extractLogoPoints(logoImg, config.particleCount);
             logoPts.forEach(pt => particlesArray.push(new Particle(pt)));
         };
 
         const animate = () => {
-            // Добавь проверку, чтобы не рисовать, пока размеры не вычислены
             if (logicalWidth === 0) {
                 animationId = requestAnimationFrame(animate);
                 return;
@@ -202,8 +188,6 @@ export default function AnimatedLogo() {
 
         const handleMouseMove = (e: MouseEvent) => {
             const rect = canvas.getBoundingClientRect();
-            // Так как canvas.width физически больше rect.width,
-            // нам нужно соотнести координаты мыши с логическим разрешением
             const scaleX = logicalWidth / rect.width;
             const scaleY = logicalHeight / rect.height;
             mouse.x = (e.clientX - rect.left) * scaleX;
@@ -226,10 +210,7 @@ export default function AnimatedLogo() {
         };
         img.src = svgUrl;
 
-        // Слушаем мышь на WINDOW, чтобы ловить ее за пределами канваса
         window.addEventListener('mousemove', handleMouseMove);
-        // Слушаем мышь на PARENT для корректного handleMouseLeave,
-        // так как канвас pointer-events-none и "mouseleave" на нем не сработает
         canvas.parentElement?.addEventListener('mouseleave', handleMouseLeave);
         window.addEventListener('resize', () => img.complete && initApp(img));
 

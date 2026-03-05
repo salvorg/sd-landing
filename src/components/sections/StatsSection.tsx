@@ -3,6 +3,7 @@ import React, {useRef, useEffect} from 'react';
 import gsap from "gsap";
 import {useGSAP} from "@gsap/react";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
+import AnimatedMap from "@/components/AnimatedMap";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -10,15 +11,15 @@ if (typeof window !== "undefined") {
 
 const stats = [
     {
-        value: 40,
-        suffix: "K+",
-        label: "Учителей и специалистов прошли обучение на наших платформах.",
-        gradient: "from-[#FF4A48] to-[#FF4A48]"
-    },
-    {
         value: 150,
         suffix: "+",
         label: "Создано обучающих роликов и профессионального видеоконтента.",
+        gradient: "from-[#FF4A48] to-[#FF4A48]"
+    },
+    {
+        value: 40,
+        suffix: "K+",
+        label: "Учителей и специалистов прошли обучение на наших платформах.",
         gradient: "from-[#0068E0] to-[#8059E1]"
     },
     {
@@ -265,10 +266,19 @@ export default function StatsSection() {
     return (
         <section ref={containerRef}
                  className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden">
-            <canvas
-                ref={canvasRef}
-                className="absolute inset-0 z-0 opacity-40 pointer-events-none"
-            />
+            <AnimatedMap />
+
+            {/* Глоу-эффекты фона */}
+            <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
+                {stats.map((_, i) => (
+                    <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/10 blur-[120px]" />
+                ))}
+            </div>
+            {/*КОМПОНЕНТ КАРТЫ*/}
+            {/*<canvas*/}
+            {/*    ref={canvasRef}*/}
+            {/*    className="absolute inset-0 z-0 opacity-40 pointer-events-none"*/}
+            {/*/>*/}
             <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
                 {stats.map((_, i) => (
                     <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/20 stats-glow"/>

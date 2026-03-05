@@ -20,7 +20,8 @@ body:has(.preloader-container) {
 }
 
 html.lenis-stopped {
-  overflow: hidden;
+  overflow: hidden !important;
+  height: 100vh !important;
 }
 
 /* Убедись, что нет конфликта с высотой */

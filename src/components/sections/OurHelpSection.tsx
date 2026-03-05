@@ -1,9 +1,12 @@
 "use client";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 import gsap from "gsap";
 import {useGSAP} from "@gsap/react";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
-import Image from "next/image";
+import LogoToMapScene from "@/components/AnimatedLogo";
+import MorphingCanvas from "@/components/AnimatedLogo";
+import {useInView} from "framer-motion";
+import AnimatedLogo from "@/components/AnimatedLogo";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -150,18 +153,15 @@ export default function OurHelpSection() {
                     </h2>
 
                     {/* КОНТЕЙНЕР ДЛЯ ЛОГОТИПА */}
-                    <div className="flex justify-center items-center relative group">
-                        {/* СЛОЙ СВЕЧЕНИЯ (Сзади) — теперь желтый */}
-                        {/*<div className="absolute inset-0 bg-[#f59e0b] blur-[100px] opacity-20 rounded-full scale-150 group-hover:opacity-40 transition-opacity duration-1000" />*/}
+                    <div className="flex justify-center items-center relative group mt-10">
+                        {/* Обертка с фиксированным макс-размером, которая центрует логотип */}
+                        <div className="relative w-full aspect-square max-w-[450px] mx-auto overflow-visible flex items-center justify-center">
 
-                        {/* КОНТЕЙНЕР ЛОГОТИПА */}
-                        <div className="logo-rotate-container relative w-62 h-62 z-10">
-                            <Image
-                                src="/images/logo/sd-partial.svg" // Если сам логотип синий, желтое свечение создаст интересный контраст. Если логотип белый или золотой, эффект будет еще сильнее.
-                                alt="Sanarip Logo Icon"
-                                fill
-                                className="object-contain logo-spin"
-                            />
+                            {/* Сам компонент AnimatedLogo */}
+                            <AnimatedLogo />
+
+                            {/* Слой свечения — теперь он под канвасом */}
+                            <div className="absolute inset-0 bg-[var(--brand-blue)] blur-[100px] opacity-10 -z-10 rounded-full scale-75 pointer-events-none" />
                         </div>
                     </div>
                 </div>

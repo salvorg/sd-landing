@@ -267,18 +267,11 @@ export default function StatsSection() {
         <section ref={containerRef}
                  className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden">
             <AnimatedMap />
-
-            {/* Глоу-эффекты фона */}
             <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
                 {stats.map((_, i) => (
                     <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/10 blur-[120px]" />
                 ))}
             </div>
-            {/*КОМПОНЕНТ КАРТЫ*/}
-            {/*<canvas*/}
-            {/*    ref={canvasRef}*/}
-            {/*    className="absolute inset-0 z-0 opacity-40 pointer-events-none"*/}
-            {/*/>*/}
             <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
                 {stats.map((_, i) => (
                     <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/20 stats-glow"/>
@@ -291,12 +284,12 @@ export default function StatsSection() {
                     {stats.map((stat, idx) => (
                         <div key={idx} className="flex flex-col group min-w-[280px] pointer-events-auto">
                             <div className={`text-[12vw] font-black leading-[0.8] bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent flex items-baseline mb-6 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]`}>
-                                <span className="stat-number" data-target={stat.value}>0</span>
+                                <span className="stat-number" data-target={stat.value}>{stat.value}</span>
                                 <span className="text-[0.6em]">{stat.suffix}</span>
                             </div>
                             <div
                                 className="w-12 h-[2px] mb-6 bg-[var(--text-muted)] opacity-30 group-hover:w-full transition-all duration-700"/>
-                            <p className="text-[10px] min-h-[50px] text-[var(--text-muted)] uppercase tracking-wider font-bold max-w-[260px]">
+                            <p className="text-[12px] min-h-[90px] px-4 py-2 text-zinc-600 font-bold uppercase tracking-wider max-w-[260px] bg-zinc-100/90">
                                 {stat.label}
                             </p>
                         </div>

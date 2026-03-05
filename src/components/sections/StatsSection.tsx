@@ -121,7 +121,7 @@ export default function StatsSection() {
         const mapPath = new Path2D(svgPathString);
         const svgWidth = 1060, svgHeight = 522;
         let scale = 1, offsetX = 0, offsetY = 0;
-        const mouse = {x: -2000, y: -2000, radius: 180};
+        const mouse = {x: -2000, y: -2000, radius: 80};
 
         class TriangleParticle {
             svgX: number;
@@ -155,13 +155,15 @@ export default function StatsSection() {
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distSq = dx * dx + dy * dy;
+                const activeRadius = mouse.radius;
+                const activeRadiusSq = activeRadius * activeRadius;
 
-                if (distSq < 32400) { // 180^2
+                if (distSq < activeRadiusSq) {
                     const dist = Math.sqrt(distSq);
-                    const force = (180 - dist) / 180;
-                    this.x -= (dx / dist) * force * this.density;
-                    this.y -= (dy / dist) * force * this.density;
-                    this.angle += force * 10;
+                    const force = (activeRadius - dist) / activeRadius;
+                    this.x -= (dx / dist) * force * this.density * 0.4;
+                    this.y -= (dy / dist) * force * this.density * 0.4;
+                    this.angle += force * 5;
                 } else {
                     this.x += (targetX - this.x) * 0.04;
                     this.y += (targetY - this.y) * 0.04;
@@ -216,24 +218,24 @@ export default function StatsSection() {
         };
 
         const handleMouseMove = (e: MouseEvent) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            if (!canvasRef.current) return;
 
-            // Обновляем координаты для взаимодействия с частицами
-            mouse.x = mouseX;
-            mouse.y = mouseY;
+            // Используем getBoundingClientRect для получения реальных координат холста на экране
+            const rect = canvasRef.current.getBoundingClientRect();
 
-            // Смещение контента для глубины (параллакс)
+            // ВАЖНО: Если у вас есть CSS scale или смещения, нужно нормировать координаты
+            const scaleX = canvasRef.current.width / rect.width;
+            const scaleY = canvasRef.current.height / rect.height;
+
+            // Точный расчет позиции курсора внутри системы координат Canvas
+            mouse.x = (e.clientX - rect.left) * scaleX;
+            mouse.y = (e.clientY - rect.top) * scaleY;
+
+            // Параллакс для контента (оставляем как был, он работает хорошо)
             if (contentRef.current) {
                 const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
                 const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-                gsap.to(contentRef.current, {
-                    x: moveX,
-                    y: moveY,
-                    duration: 1,
-                    ease: "power2.out"
-                });
+                gsap.to(contentRef.current, { x: moveX, y: moveY, duration: 1, ease: "power2.out" });
             }
         };
 
@@ -265,8 +267,7 @@ export default function StatsSection() {
                  className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden">
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 z-0 opacity-40 pointer-events-none scale-110"
-                style={{ transform: 'translateZ(-50px)' }}
+                className="absolute inset-0 z-0 opacity-40 pointer-events-none"
             />
             <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
                 {stats.map((_, i) => (

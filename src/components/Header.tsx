@@ -6,9 +6,9 @@ import Link from "next/link";
 import {motion} from "framer-motion";
 
 const links = [
-    {path: '/services', label: 'Услуги'},
-    {path: '/projects', label: 'Проекты'},
-    {path: '/about', label: 'О компании'}
+    {path: '#', label: 'Услуги'},
+    {path: '#', label: 'Проекты'},
+    {path: '#', label: 'О компании'}
 ]
 
 export default function Header() {
@@ -88,7 +88,7 @@ export default function Header() {
                     <div className="flex items-center space-x-6 relative">
                         {links.map((item) => (
                             <motion.a
-                                key={item.path}
+                                key={item.label}
                                 href={item.path}
                                 className="relative px-3 py-2 group overflow-hidden"
                                 whileHover={{y: -2}} // Легкий подъем всей ссылки

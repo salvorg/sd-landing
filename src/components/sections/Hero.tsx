@@ -20,39 +20,15 @@ export default function HeroSection() {
     const mainTransformRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Сетка рендерится только после начала скролла
+    // Сетка (24 фото) рендерится только после начала скролла — они не нужны сразу
     const [gridVisible, setGridVisible] = useState(false);
-    // Видео начинает грузиться только когда сетка появилась
-    const [videoReady, setVideoReady] = useState(false);
 
     // Показываем сетку при первом скролле
     useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 10) {
-                setGridVisible(true);
-            }
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
+        const handleScroll = () => setGridVisible(true);
+        window.addEventListener('scroll', handleScroll, { passive: true, once: true } as any);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    // Запускаем загрузку видео как только сетка появилась
-    useEffect(() => {
-        if (!gridVisible) return;
-        // Небольшая задержка чтобы сетка успела отрендериться
-        const timer = setTimeout(() => setVideoReady(true), 100);
-        return () => clearTimeout(timer);
-    }, [gridVisible]);
-
-    // Принудительно запускаем видео когда оно готово
-    useEffect(() => {
-        if (videoReady && videoRef.current) {
-            videoRef.current.load();
-            videoRef.current.play().catch(() => {
-                // Автовоспроизведение заблокировано браузером — poster остаётся
-            });
-        }
-    }, [videoReady]);
 
     useGSAP(() => {
         if (!containerRef.current || !mainTransformRef.current || !textContentRef.current) return;
@@ -79,7 +55,7 @@ export default function HeroSection() {
                 pin: true,
                 scrub: 1,
                 anticipatePin: 1,
-                onEnter: () => setGridVisible(true), // Запасной триггер
+                onEnter: () => setGridVisible(true),
             }
         });
 
@@ -160,7 +136,7 @@ export default function HeroSection() {
                                 {i === VIDEO_INDEX ? (
                                     // Центральная ячейка — видео
                                     <div className="absolute w-full h-full z-40">
-                                        {/* Poster всегда виден — мгновенно */}
+                                        {/* Poster — виден мгновенно, пока видео не загрузилось */}
                                         <Image
                                             src="/videos/hero-poster.webp"
                                             alt="hero background"
@@ -168,22 +144,22 @@ export default function HeroSection() {
                                             className="object-cover"
                                             priority
                                         />
-                                        {/* Видео грузится поверх poster только после скролла */}
-                                        {videoReady && (
-                                            <video
-                                                ref={videoRef}
-                                                autoPlay
-                                                loop
-                                                muted
-                                                playsInline
-                                                preload="none"
-                                                className="absolute inset-0 w-full h-full object-cover"
-                                            >
-                                                {/* WebM первым — меньше весит, быстрее грузится */}
-                                                <source src="/videos/hero-section-video.webm" type="video/webm" />
-                                                <source src="/videos/hero-section-video-compressed.mp4" type="video/mp4" />
-                                            </video>
-                                        )}
+                                        {/* Видео грузится сразу поверх poster.
+                                            preload="auto" — браузер начинает качать сразу.
+                                            Когда готово — перекрывает poster (z-10 > z-0 у Image) */}
+                                        <video
+                                            ref={videoRef}
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            preload="auto"
+                                            className="absolute inset-0 w-full h-full object-cover z-10"
+                                        >
+                                            {/* WebM первым — 3MB вместо 18MB, большинство браузеров возьмут его */}
+                                            <source src="/videos/hero-section-video.webm" type="video/webm" />
+                                            <source src="/videos/hero-section-video-compressed.mp4" type="video/mp4" />
+                                        </video>
                                     </div>
                                 ) : (
                                     // Остальные ячейки — фото, грузятся лениво

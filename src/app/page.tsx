@@ -27,7 +27,7 @@ export default function Home() {
 
                 window.scrollTo(0, 0);
                 ScrollTrigger.refresh();
-            }, 1100);
+            }, 800);
 
             return () => clearTimeout(timer);
         }

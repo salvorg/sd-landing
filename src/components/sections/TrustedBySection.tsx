@@ -14,6 +14,9 @@ const logos = [
     { src: '/images/logo/partners/wbg-logo-ru.png', alt: 'Partner wbg' },
 ];
 
+// Дублируем один раз вне компонента — массив не пересоздаётся при каждом рендере
+const scrollingLogos = [...logos, ...logos];
+
 export default function TrustedBySection() {
     return (
         <section className="relative pt-18 pb-32 bg-[var(--bg-main)] overflow-hidden">
@@ -27,9 +30,12 @@ export default function TrustedBySection() {
             <div className="relative flex overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-20 before:bg-gradient-to-r before:from-[var(--bg-main)] before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-20 after:bg-gradient-to-l after:from-[var(--bg-main)] after:to-transparent">
 
                 {/* Анимированная лента */}
-                <div className="flex animate-infinite-scroll whitespace-nowrap hover:[animation-play-state:paused]">
-                    {/* Дублируем массив дважды для бесшовности */}
-                    {[...logos, ...logos].map((logo, index) => (
+                <div
+                    className="flex animate-infinite-scroll whitespace-nowrap hover:[animation-play-state:paused]"
+                    // Подсказка браузеру — этот элемент будет трансформироваться
+                    style={{ willChange: 'transform' }}
+                >
+                    {scrollingLogos.map((logo, index) => (
                         <div
                             key={index}
                             className="flex items-center justify-center min-w-[200px] px-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
@@ -40,7 +46,11 @@ export default function TrustedBySection() {
                                 width={160}
                                 height={60}
                                 className="object-contain h-12 w-auto pointer-events-none"
-                                priority={index < 8}
+                                // priority только для первых 9 (первый видимый набор),
+                                // остальные 9 — дубликаты, грузятся лениво
+                                priority={index < logos.length}
+                                // Явный размер избавляет Next.js от лишних вычислений
+                                sizes="160px"
                             />
                         </div>
                     ))}

@@ -7,7 +7,7 @@ import {motion} from "framer-motion";
 
 const links = [
     {path: '#', label: 'Услуги'},
-    {path: '#', label: 'Проекты'},
+    {path: '/projects', label: 'Проекты'},
     {path: '#', label: 'О компании'}
 ]
 

@@ -1,0 +1,618 @@
+/* ===================== PAGE WRAPPER ===================== */
+#projects-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #ffffff;
+    color: #3a3a4a;
+}
+
+/* ===================== SVG LINE ===================== */
+#scrollLineSVG {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#animatedPath {
+    stroke-dasharray: 0;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 8px rgba(0, 69, 255, 0.4));
+}
+
+.line-glow-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #0045FF;
+    box-shadow: 0 0 20px 6px rgba(0, 69, 255, 0.6);
+    pointer-events: none;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    /* Убрали transition, чтобы точка не отставала при скролле */
+}
+
+/* ===================== INTRO SECTION ===================== */
+.intro-section {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding-top: 80px;
+}
+
+.intro-section>* {
+    position: relative;
+    z-index: 50;
+}
+
+.intro-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: #0045FF;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.3s forwards;
+}
+
+.page-title {
+    text-align: center;
+    font-size: clamp(2rem, 7vw, 50px);
+    font-weight: 700;
+    color: #222;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.page-title span {
+    -webkit-text-fill-color: var(--bg-main);
+    -webkit-text-stroke: 2px var(--text-main);
+    paint-order: stroke fill;
+    display: inline-block;
+    position: relative;
+}
+
+.intro-count {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #7a7a8a;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.9s ease 0.8s forwards;
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+}
+
+.scroll-hint span {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7a7a8a;
+    font-weight: 600;
+}
+
+.scroll-arrow {
+    width: 30px;
+    height: 50px;
+    border: 2px solid rgba(0, 69, 255, 0.3);
+    border-radius: 15px;
+    position: relative;
+}
+
+.scroll-arrow::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #0045FF;
+    animation: scrollDot 1.8s ease infinite;
+}
+
+@keyframes scrollDot {
+    0% {
+        top: 8px;
+        opacity: 1;
+    }
+
+    80% {
+        top: 28px;
+        opacity: 0.3;
+    }
+
+    100% {
+        top: 8px;
+        opacity: 0;
+    }
+}
+
+/* ===================== CANVAS / PARTICLES ===================== */
+#mainCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+    #mainCanvas { display: none; }
+}
+
+#mouseCatcher {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+}
+
+/* ===================== PROJECT SECTIONS ===================== */
+.project-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding: 80px 0;
+}
+
+#projects-container {
+    padding-bottom: 200px;
+}
+
+.section-inner {
+    display: flex;
+    width: 100%;
+    max-width: 1700px;
+    margin: 0 auto;
+    padding: 0 5%;
+    align-items: center;
+}
+
+.section-inner.reverse {
+    flex-direction: row-reverse;
+}
+
+.content-half {
+    width: 55%;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    z-index: 50;
+}
+
+.empty-half {
+    width: 45%;
+}
+
+.project-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(25px);
+    border: 1.5px solid rgba(0, 69, 255, 0.12);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 25px 70px rgba(0, 69, 255, 0.08), 0 5px 25px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(-80px) scale(0.95);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s ease;
+}
+
+.project-card.from-right {
+    transform: translateX(80px) scale(0.95);
+}
+
+.project-card.visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+.project-card.visible+.empty-half .visible-logo,
+.section-inner:has(.project-card.visible) .visible-logo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.project-card:hover {
+    box-shadow: 0 35px 90px rgba(0, 69, 255, 0.14), 0 10px 35px rgba(0, 0, 0, 0.08);
+    transform: translateY(-6px) translateX(0) scale(1) !important;
+}
+
+.project-card::after {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 69, 255, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.number-col {
+    padding: 0 0 0 1.5rem;
+    margin-top: -0.8rem;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.project-card.visible .number-col {
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+.big-number {
+    font-size: clamp(5.5rem, 9vw, 10rem);
+    font-weight: 900;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 2.5px #0045FF;
+    opacity: 0.65;
+    letter-spacing: -4px;
+    transition: opacity 0.4s, transform 0.4s;
+}
+
+.project-card:hover .big-number {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.text-col {
+    flex: 1;
+    max-width: 700px;
+}
+
+.project-title {
+    font-size: clamp(1.125rem, 3.5vw, 24px);
+    font-weight: 700;
+    color: var(--text-muted-dark);
+    margin-bottom: 1.5rem;
+    line-height: 1.25;
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+.project-card.visible .project-title {
+    animation: fadeUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+
+.text-row {
+    margin-bottom: 0.8rem;
+    font-size: clamp(0.95rem, 2.2vw, 18px);
+    line-height: 1.7;
+    font-weight: 400;
+    color: var(--text-muted-dark);
+    display: block; /* Позволяет тексту перетекать на новую строку пословно */
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.text-row strong {
+    margin-right: 0.5rem;
+}
+
+.project-card.visible .text-row:nth-child(2) {
+    animation: fadeUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+}
+
+.project-card.visible .text-row:nth-child(3) {
+    animation: fadeUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+}
+
+.project-card.visible .text-row:nth-child(4) {
+    animation: fadeUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+}
+
+.project-card.visible .text-row:nth-child(5) {
+    animation: fadeUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+}
+
+@keyframes fadeUpStagger {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.text-row strong {
+    color: var(--text-muted-dark);
+    font-weight: 700;
+    margin-right: 0.5rem;
+    font-size: clamp(0.95rem, 2.2vw, 18px);
+    letter-spacing: normal;
+}
+
+.text-row p {
+    margin: 0;
+    display: inline;
+}
+
+.custom-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.custom-list li {
+    position: relative;
+    padding-left: 1rem;
+    margin-bottom: 0;
+    font-size: clamp(0.95rem, 2.2vw, 18px);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.project-card.visible .custom-list li:nth-child(1) {
+    animation: fadeInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+}
+
+.project-card.visible .custom-list li:nth-child(2) {
+    animation: fadeInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
+}
+
+.project-card.visible .custom-list li:nth-child(3) {
+    animation: fadeInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+}
+
+@keyframes fadeInLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.custom-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0.2rem;
+    transform: none;
+    font-size: 0.8rem;
+    color: var(--text-muted-dark);
+    font-weight: 700;
+}
+
+.donor-badge {
+    font-size: clamp(0.95rem, 2.2vw, 18px);
+    font-weight: 400;
+    color: var(--text-muted-dark);
+    letter-spacing: 0.5px;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================== FOOTER SECTION ===================== */
+.projects-footer {
+    position: relative;
+    padding: 8rem 5% 20rem 5%;
+    text-align: center;
+    background: transparent;
+}
+
+.projects-footer>* {
+    position: relative;
+    z-index: 100;
+}
+
+.footer-label {
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #0045FF;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.footer-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: #1a1a2e;
+    margin-bottom: 2.5rem;
+}
+
+.footer-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.1rem 2.8rem;
+    background: #0045FF;
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.footer-cta:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 45px rgba(0, 69, 255, 0.4);
+}
+
+/* ===================== SIDE DOTS ===================== */
+.project-step-dot {
+    position: fixed;
+    right: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 200;
+}
+
+.step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0, 69, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.step-dot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.3s ease;
+}
+
+.step-dot:hover::before {
+    background: rgba(0, 69, 255, 0.08);
+}
+
+.step-dot.active {
+    background: #0045FF;
+    transform: scale(1.6);
+    box-shadow: 0 0 12px rgba(0, 69, 255, 0.6);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1200px) {
+    .content-half {
+        width: 65%;
+    }
+
+    .empty-half {
+        width: 35%;
+    }
+}
+
+@media (max-width: 1023px) {
+
+    .section-inner,
+    .section-inner.reverse {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .content-half {
+        width: 100%;
+    }
+
+    .empty-half {
+        display: none;
+    }
+
+    .project-card {
+        padding: 2rem 1.75rem;
+        gap: 1.25rem;
+        border-radius: 22px;
+    }
+
+    .big-number {
+        font-size: clamp(4rem, 12vw, 6rem);
+    }
+
+    .intro-section {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .project-section {
+        min-height: auto;
+        padding: 48px 0;
+        height: auto !important;
+    }
+
+    .project-step-dot {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .project-card {
+        flex-direction: column;
+        padding: 1.5rem 1.1rem;
+        border-radius: 18px;
+        gap: 1rem;
+    }
+
+    .project-title {
+        margin-bottom: 1.1rem;
+    }
+
+    .text-row {
+        margin-bottom: 0.6rem;
+        line-height: 1.55;
+    }
+
+    .number-col {
+        padding: 0;
+        margin: 0;
+    }
+
+    .big-number {
+        font-size: 3.5rem;
+    }
+
+    .scroll-hint {
+        bottom: 1.5rem;
+    }
+
+    .section-inner {
+        padding: 0 0.85rem;
+    }
+
+    #projects-container {
+        padding-bottom: 60px;
+    }
+
+    .project-section {
+        padding: 32px 0;
+    }
+}

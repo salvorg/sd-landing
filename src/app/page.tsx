@@ -7,14 +7,31 @@ import ContactUs from "@/components/sections/ContactUs";
 import Preloader from "@/components/Preloader";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "lenis/react";
+import LazySection from "@/components/ui/LazySection";
 
 const OurHelpSection = dynamic(() => import("@/components/sections/OurHelpSection"), { ssr: true });
 const StatsSection = dynamic(() => import("@/components/sections/StatsSection"), { ssr: true });
 const TrustedBySection = dynamic(() => import("@/components/sections/TrustedBySection"), { ssr: true });
+const ProjectSection = dynamic(() => import("@/components/sections/ProjectSection"), { ssr: true });
+
+// Глобальная переменная в области видимости модуля для мгновенного отслеживания на клиенте
+let hasLoadedOnceGlobal = false;
 
 export default function Home() {
-    const [isLoading, setIsLoading] = useState(true);
+    // Чтобы избежать hydration mismatch (несоответствия разметки сервера и клиента),
+    // изначально ставим true (для SSR), но если глобально на клиенте уже загружалось — ставим false сразу.
+    const [isLoading, setIsLoading] = useState(() => {
+        return !hasLoadedOnceGlobal;
+    });
     const lenis = useLenis();
+
+    useEffect(() => {
+        // Если в сессии браузера уже есть флаг завершения прелоадера, пропускаем его
+        if (typeof window !== "undefined" && sessionStorage.getItem("hasLoadedOnce")) {
+            hasLoadedOnceGlobal = true;
+            setIsLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         if (isLoading) {
@@ -39,11 +56,19 @@ export default function Home() {
         }
     }, []);
 
+    const handlePreloaderComplete = () => {
+        if (typeof window !== "undefined") {
+            sessionStorage.setItem("hasLoadedOnce", "true");
+        }
+        hasLoadedOnceGlobal = true;
+        setIsLoading(false);
+    };
+
     return (
         <main className="relative w-full bg-zinc-950">
             <AnimatePresence>
                 {isLoading && (
-                    <Preloader onComplete={() => setIsLoading(false)} />
+                    <Preloader onComplete={handlePreloaderComplete} />
                 )}
             </AnimatePresence>
 
@@ -54,9 +79,23 @@ export default function Home() {
                 className="relative w-full overflow-hidden"
             >
                 <Hero/>
-                <OurHelpSection />
-                <StatsSection />
-                <TrustedBySection />
+                
+                <LazySection className="min-h-[340vh] md:min-h-[400vh]">
+                    <OurHelpSection />
+                </LazySection>
+
+                <LazySection minHeight="100vh">
+                    <StatsSection />
+                </LazySection>
+
+                <LazySection minHeight="300px">
+                    <TrustedBySection />
+                </LazySection>
+
+                <LazySection minHeight="100vh">
+                <ProjectSection />
+                </LazySection>
+
                 <ContactUs />
             </motion.div>
         </main>

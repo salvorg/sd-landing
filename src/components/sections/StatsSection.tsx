@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,22 +11,19 @@ if (typeof window !== "undefined") {
 
 const stats = [
     {
+        value: 6,
+        suffix: "+",
+        label: "Успешного опыта работы с международными донорами (USAID, WB, GIZ) и госсектором."
+    },
+    {
         value: 150,
         suffix: "+",
-        label: "Создано обучающих роликов и профессионального видеоконтента.",
-        gradient: "from-[#FF4A48] to-[#FF4A48]"
+        label: "Создано обучающих роликов, документальных фильмов и анимации."
     },
     {
         value: 40,
         suffix: "K+",
-        label: "Учителей и специалистов прошли обучение на наших платформах.",
-        gradient: "from-[#0068E0] to-[#8059E1]"
-    },
-    {
-        value: 6,
-        suffix: "+",
-        label: "Лет успешного опыта работы с международными донорами и госсектором.",
-        gradient: "from-[#0068E0] to-[#0068E0]"
+        label: "Учителей и госслужащих прошли обучение на наших платформах."
     }
 ];
 
@@ -61,32 +58,42 @@ export default function StatsSection() {
     return (
         <section
             ref={containerRef}
-            className="relative min-h-screen w-full flex items-center bg-[var(--bg-main)] overflow-hidden"
+            className="relative min-h-screen w-full flex items-center md:items-end pt-24 pb-16 md:pb-24 bg-[var(--bg-main)] overflow-hidden"
         >
-            {/* Единственная карта — без дублирования */}
-            <AnimatedMap />
+            {/* Карта — только на md+ */}
+            <div className="hidden md:block absolute inset-0">
+                <AnimatedMap />
+            </div>
 
-            {/* Фоновые glow-эффекты */}
             <div className="absolute inset-0 z-5 pointer-events-none flex justify-around items-center opacity-30">
                 {stats.map((_, i) => (
-                    <div key={i} className="w-[30vw] h-[30vw] rounded-full bg-blue-500/10 blur-[120px]" />
+                    <div key={i} className="w-[40vw] md:w-[30vw] h-[40vw] md:h-[30vw] rounded-full bg-blue-500/10 blur-[120px]" />
                 ))}
             </div>
+
+            {/* Белый градиентный фон внизу */}
+            <div
+                className="absolute bottom-0 left-0 w-full h-[160px] md:h-[236px] z-[8] pointer-events-none"
+                style={{ background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 66.1%)' }}
+            />
 
             {/* Контент */}
             <div
                 ref={contentRef}
-                className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10 pointer-events-none"
+                className="container mx-auto px-4 sm:px-6 md:px-12 relative z-10 pointer-events-none"
             >
-                <div className="flex flex-col md:flex-row justify-center items-start md:items-center gap-12">
+                <div className="flex flex-col gap-10 sm:gap-12 md:gap-4 lg:gap-6 w-full md:flex-row justify-between items-center">
                     {stats.map((stat, idx) => (
-                        <div key={idx} className="flex flex-col group min-w-[280px] pointer-events-auto">
-                            <div className={`text-[12vw] font-black leading-[0.8] bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent flex items-baseline mb-6 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]`}>
+                        <div key={idx} className="flex flex-col group w-full md:flex-1 md:min-w-0 pointer-events-auto items-center">
+                            <div className={`text-[clamp(4rem,16vw,10rem)] md:text-[8vw] font-black leading-[0.8] bg-gradient-to-r from-[#2365CE] to-[#D6525E] bg-clip-text text-transparent flex items-baseline mb-4 md:mb-6 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]
+                                ${idx === 0 ? 'bg-[length:300%_100%] bg-left' :
+                                    idx === 1 ? 'bg-[length:300%_100%] bg-center' :
+                                        'bg-[length:300%_100%] bg-right'}`}
+                            >
                                 <span className="stat-number" data-target={stat.value}>{stat.value}</span>
-                                <span className="text-[0.6em]">{stat.suffix}</span>
+                                <span>{stat.suffix}</span>
                             </div>
-                            <div className="w-12 h-[2px] mb-6 bg-[var(--text-muted)] opacity-30 group-hover:w-full transition-all duration-700" />
-                            <p className="text-[12px] min-h-[90px] px-4 py-2 text-zinc-600 font-bold uppercase tracking-wider max-w-[260px] bg-zinc-100/90">
+                            <p className="font-normal text-sm sm:text-base md:text-lg leading-tight text-center max-w-[300px] px-2">
                                 {stat.label}
                             </p>
                         </div>

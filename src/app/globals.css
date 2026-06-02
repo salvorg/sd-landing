@@ -11,6 +11,7 @@
   }
   /* Увеличьте время (например, до 40s), если дрыганье заметно на большой скорости */
   --animate-infinite-scroll: infinite-scroll 40s linear infinite;
+  --color-muted-dark: #525050;
 }
 
 html:has(.preloader-container),
@@ -102,6 +103,7 @@ html.lenis {
     --brand-blue: #2563eb;
     --border-subtle: rgba(0, 0, 0, 0.06);
     --grid-number: rgba(0, 0, 0, 0.03);
+    --text-muted-dark: #525050;
   }
 }
 
